@@ -1,2 +1,2 @@
-# Raquitich-Backend
-Proyecto Fullstack Backend
+# Raquitich-Frontend
+Proyecto Fullstack Frontend
