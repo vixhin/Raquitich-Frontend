@@ -1,0 +1,85 @@
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: white;
+  padding: 30px;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 40px;
+
+  h1 {
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.8;
+  }
+}
+
+.logo {
+  width: 60px;
+}
+
+/* GRID 3 COLUMNAS */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 35                                                       0px); /* 👈 clave */
+  gap: 25px;
+}
+
+/* CARD */
+.card {
+  background: white;
+  color: #1e3c72;
+  padding: 15px;
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  width: 280px;
+  height: 100px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  h3 {
+    margin: 0;
+  }
+
+  p {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+}
+
+/* HOVER EXPANSIÓN */
+.card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+}
+
+/* BOTÓN FLECHA */
+.go-btn {
+  align-self: center;
+  background: #1e3c72;
+  color: white;
+  border: none;
+  border-radius: 30%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.go-btn:hover {
+  background: #2a5298;
+  transform: scale(1.1);
+}
