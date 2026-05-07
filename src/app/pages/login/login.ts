@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -16,25 +16,34 @@ export class LoginComponent {
   password: string = '';
   error: string = '';
 
-  constructor(private authService: AuthService) {}
+  // USUARIO FALSO TEMPORAL
+  usuarioMock = {
+    email: 'admin@raquitich.cl',
+    password: '1234'
+  };
+
+  constructor(private router: Router) {}
 
   login() {
+
     this.error = '';
 
-    this.authService.login(this.email, this.password).subscribe({
-      next: (res: any) => {
-        console.log('Login OK', res);
-        localStorage.setItem('token', res.token);
-      },
-      error: (err) => {
-        if (err.status === 404) {
-          this.error = 'Cuenta no existente';
-        } else if (err.status === 401) {
-          this.error = 'Contraseña incorrecta';
-        } else {
-          this.error = 'Error del servidor';
-        }
-      }
-    });
+    // VALIDAR CORREO
+    if (this.email !== this.usuarioMock.email) {
+      this.error = 'Cuenta no existente';
+      return;
+    }
+
+    // VALIDAR PASSWORD
+    if (this.password !== this.usuarioMock.password) {
+      this.error = 'Contraseña incorrecta';
+      return;
+    }
+
+    // LOGIN CORRECTO
+    localStorage.setItem('token', 'fake-jwt-token');
+
+    // REDIRIGE AL HOME
+    this.router.navigate(['/home']);
   }
 }

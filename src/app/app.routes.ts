@@ -3,6 +3,6 @@ import { LoginComponent } from './pages/login/login';
 import { HomeComponent } from './pages/home/home';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },   // 👈 ahora entra al inicio
-  { path: 'login', component: LoginComponent }
+  { path: '', component: LoginComponent }, // 👈 abre primero login
+  { path: 'home', component: HomeComponent }
 ];

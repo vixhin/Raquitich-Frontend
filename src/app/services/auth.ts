@@ -1,19 +1,29 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable, of, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private API = 'http://localhost:8080/auth';
+  login(email: string, password: string): Observable<any> {
 
-  constructor(private http: HttpClient) {}
+    // USUARIO MOCK
+    if (email === 'admin@raquitich.cl') {
 
-  login(email: string, password: string) {
-    return this.http.post(`${this.API}/login`, {
-      email,
-      password
-    });
+      if (password === '1234') {
+        return of({
+          token: 'fake-jwt-token'
+        });
+      }
+
+      return throwError(() => ({
+        status: 401
+      }));
+    }
+
+    return throwError(() => ({
+      status: 404
+    }));
   }
 }

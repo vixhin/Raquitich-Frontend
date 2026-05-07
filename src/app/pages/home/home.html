@@ -1,65 +1,439 @@
-<div class="home-container">
+<div class="dashboard-container">
 
-  <!-- HEADER -->
-  <header class="header">
-    <img src="/logo.png" class="logo">
-    <div>
-      <h1>Universidad Raquitich</h1>
-      <p>Sistema de Gestión Académica</p>
-    </div>
-  </header>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
 
-  <!-- DASHBOARD -->
-  <section class="dashboard">
-
-    <div class="card">
-      <h3>Gestión de Estudiantes</h3>
-      <p>Administra fichas, historial académico y datos personales.</p>
-      <button class="go-btn">→</button>
+    <!-- LOGO -->
+    <div class="logo-section">
+      <img src="logo-raquitich.png" class="logo">
+      <h2>Raquitich</h2>
+      <span>Universidad Digital</span>
     </div>
 
-    <div class="card">
-      <h3>Gestión Académica</h3>
-      <p>Asignaturas, secciones, docentes y calificaciones.</p>
-      <button class="go-btn">→</button>
+    <!-- MENU -->
+    <div class="menu">
+
+      <!-- ESTUDIANTES -->
+      <div class="menu-item" [class.active]="activeMenu === 'estudiantes'">
+
+        <div class="menu-title" (click)="toggleMenu('estudiantes')">
+
+          <div class="title-left">
+            <span class="material-icons icon">school</span>
+            <span>Estudiantes</span>
+          </div>
+
+          <span class="material-icons arrow">
+            {{ activeMenu === 'estudiantes' ? 'expand_less' : 'expand_more' }}
+          </span>
+
+        </div>
+
+        <div class="submenu">
+          <a>Registrar estudiante</a>
+          <a>Editar ficha</a>
+          <a>Consultar estudiantes</a>
+          <a>Eliminar estudiante</a>
+          <a>Trayectoria académica</a>
+        </div>
+
+      </div>
+
+      <!-- GESTION ACADEMICA -->
+      <div class="menu-item" [class.active]="activeMenu === 'academico'">
+
+        <div class="menu-title" (click)="toggleMenu('academico')">
+
+          <div class="title-left">
+            <span class="material-icons icon">menu_book</span>
+            <span>Gestión Académica</span>
+          </div>
+
+          <span class="material-icons arrow">
+            {{ activeMenu === 'academico' ? 'expand_less' : 'expand_more' }}
+          </span>
+
+        </div>
+
+        <div class="submenu">
+          <a>Asignaturas</a>
+          <a>Secciones</a>
+          <a>Horarios</a>
+          <a>Docentes</a>
+          <a>Matrículas</a>
+        </div>
+
+      </div>
+
+      <!-- CALIFICACIONES -->
+      <div class="menu-item" [class.active]="activeMenu === 'calificaciones'">
+
+        <div class="menu-title" (click)="toggleMenu('calificaciones')">
+
+          <div class="title-left">
+            <span class="material-icons icon">grading</span>
+            <span>Calificaciones</span>
+          </div>
+
+          <span class="material-icons arrow">
+            {{ activeMenu === 'calificaciones' ? 'expand_less' : 'expand_more' }}
+          </span>
+
+        </div>
+
+        <div class="submenu">
+          <a>Ingresar notas</a>
+          <a>Editar notas</a>
+          <a>Evaluaciones</a>
+          <a>Historial académico</a>
+        </div>
+
+      </div>
+
+      <!-- MENSAJERIA -->
+      <div class="menu-item" [class.active]="activeMenu === 'mensajes'">
+
+        <div class="menu-title" (click)="toggleMenu('mensajes')">
+
+          <div class="title-left">
+            <span class="material-icons icon">chat</span>
+            <span>Mensajería</span>
+          </div>
+
+          <span class="material-icons arrow">
+            {{ activeMenu === 'mensajes' ? 'expand_less' : 'expand_more' }}
+          </span>
+
+        </div>
+
+        <div class="submenu">
+          <a>Bandeja entrada</a>
+          <a>Chats grupales</a>
+          <a>Enviar mensaje</a>
+          <a>Notificaciones</a>
+        </div>
+
+      </div>
+
+      <!-- CALENDARIO -->
+      <div class="menu-item" [class.active]="activeMenu === 'calendario'">
+
+        <div class="menu-title" (click)="toggleMenu('calendario')">
+
+          <div class="title-left">
+            <span class="material-icons icon">calendar_month</span>
+            <span>Calendario</span>
+          </div>
+
+          <span class="material-icons arrow">
+            {{ activeMenu === 'calendario' ? 'expand_less' : 'expand_more' }}
+          </span>
+
+        </div>
+
+        <div class="submenu">
+          <a>Eventos</a>
+          <a>Actividades</a>
+          <a>Evaluaciones</a>
+          <a>Calendario académico</a>
+        </div>
+
+      </div>
+
+      <!-- TALLERES -->
+      <div class="menu-item" [class.active]="activeMenu === 'talleres'">
+
+        <div class="menu-title" (click)="toggleMenu('talleres')">
+
+          <div class="title-left">
+            <span class="material-icons icon">sports_soccer</span>
+            <span>Talleres</span>
+          </div>
+
+          <span class="material-icons arrow">
+            {{ activeMenu === 'talleres' ? 'expand_less' : 'expand_more' }}
+          </span>
+
+        </div>
+
+        <div class="submenu">
+          <a>Ver talleres</a>
+          <a>Inscribir estudiantes</a>
+          <a>Administrar cupos</a>
+        </div>
+
+      </div>
+
+      <!-- MURALES -->
+      <div class="menu-item" [class.active]="activeMenu === 'murales'">
+
+        <div class="menu-title" (click)="toggleMenu('murales')">
+
+          <div class="title-left">
+            <span class="material-icons icon">campaign</span>
+            <span>Murales</span>
+          </div>
+
+          <span class="material-icons arrow">
+            {{ activeMenu === 'murales' ? 'expand_less' : 'expand_more' }}
+          </span>
+
+        </div>
+
+        <div class="submenu">
+          <a>Publicar aviso</a>
+          <a>Editar comunicado</a>
+          <a>Eliminar publicación</a>
+        </div>
+
+      </div>
+
+      <!-- REPORTES -->
+      <div class="menu-item" [class.active]="activeMenu === 'reportes'">
+
+        <div class="menu-title" (click)="toggleMenu('reportes')">
+
+          <div class="title-left">
+            <span class="material-icons icon">analytics</span>
+            <span>Reportes</span>
+          </div>
+
+          <span class="material-icons arrow">
+            {{ activeMenu === 'reportes' ? 'expand_less' : 'expand_more' }}
+          </span>
+
+        </div>
+
+        <div class="submenu">
+          <a>Reporte académico</a>
+          <a>Estadísticas</a>
+          <a>Exportar PDF</a>
+        </div>
+
+      </div>
+
+      <!-- CONFIG -->
+      <div class="menu-item" [class.active]="activeMenu === 'configuracion'">
+
+        <div class="menu-title" (click)="toggleMenu('configuracion')">
+
+          <div class="title-left">
+            <span class="material-icons icon">settings</span>
+            <span>Configuración</span>
+          </div>
+
+          <span class="material-icons arrow">
+            {{ activeMenu === 'configuracion' ? 'expand_less' : 'expand_more' }}
+          </span>
+
+        </div>
+
+        <div class="submenu">
+          <a>Usuarios</a>
+          <a>Roles</a>
+          <a>Permisos</a>
+          <a>Seguridad</a>
+        </div>
+
+      </div>
+
     </div>
 
-    <div class="card">
-      <h3>Mensajería</h3>
-      <p>Comunicación interna entre estudiantes y docentes.</p>
-      <button class="go-btn">→</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+
+      <div>
+        <h1>Panel Administrativo</h1>
+        <p>Universidad Raquitich</p>
+      </div>
+
+      <div class="top-actions">
+
+        <button class="icon-button">
+          <span class="material-icons">notifications</span>
+        </button>
+
+        <button class="icon-button">
+          <span class="material-icons">mail</span>
+        </button>
+
+        <div class="profile-box">
+
+          <div class="profile-avatar">
+            D
+          </div>
+
+          <div>
+            <h4>Director Académico</h4>
+            <span>Administrador</span>
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
-    <div class="card">
-      <h3>Calendario</h3>
-      <p>Eventos, evaluaciones y actividades académicas.</p>
-      <button class="go-btn">→</button>
+    <!-- CARDS -->
+    <div class="cards-grid">
+
+      <div class="card">
+        <div>
+          <div class="card-icon blue">
+            <span class="material-icons">school</span>
+          </div>
+
+          <h2>Estudiantes</h2>
+
+          <p>
+            Gestión de fichas estudiantiles, historial y trayectoria académica.
+          </p>
+
+          <ul>
+            <li>Registro de estudiantes</li>
+            <li>Consulta de información</li>
+            <li>Seguimiento académico</li>
+          </ul>
+        </div>
+
+        <button>
+          Ingresar
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-icon green">
+            <span class="material-icons">menu_book</span>
+          </div>
+
+          <h2>Gestión Académica</h2>
+
+          <p>
+            Administración de asignaturas, horarios, docentes y secciones.
+          </p>
+
+          <ul>
+            <li>Crear asignaturas</li>
+            <li>Gestionar horarios</li>
+            <li>Asignar docentes</li>
+          </ul>
+        </div>
+
+        <button>
+          Ingresar
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-icon orange">
+            <span class="material-icons">grading</span>
+          </div>
+
+          <h2>Calificaciones</h2>
+
+          <p>
+            Ingreso y administración de notas y evaluaciones.
+          </p>
+
+          <ul>
+            <li>Registrar notas</li>
+            <li>Editar evaluaciones</li>
+            <li>Consultar historial</li>
+          </ul>
+        </div>
+
+        <button>
+          Ingresar
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-icon blue">
+            <span class="material-icons">chat</span>
+          </div>
+
+          <h2>Mensajería</h2>
+
+          <p>
+            Comunicación institucional entre usuarios.
+          </p>
+
+          <ul>
+            <li>Chats internos</li>
+            <li>Mensajes grupales</li>
+            <li>Notificaciones</li>
+          </ul>
+        </div>
+
+        <button>
+          Ingresar
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-icon green">
+            <span class="material-icons">calendar_month</span>
+          </div>
+
+          <h2>Calendario</h2>
+
+          <p>
+            Gestión de eventos y actividades universitarias.
+          </p>
+
+          <ul>
+            <li>Eventos académicos</li>
+            <li>Calendario institucional</li>
+            <li>Evaluaciones</li>
+          </ul>
+        </div>
+
+        <button>
+          Ingresar
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-icon orange">
+            <span class="material-icons">sports_soccer</span>
+          </div>
+
+          <h2>Talleres</h2>
+
+          <p>
+            Administración de talleres extracurriculares.
+          </p>
+
+          <ul>
+            <li>Inscripciones</li>
+            <li>Control de cupos</li>
+            <li>Horarios talleres</li>
+          </ul>
+        </div>
+
+        <button>
+          Ingresar
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
     </div>
 
-    <div class="card">
-      <h3>Trayectoria</h3>
-      <p>Seguimiento del progreso académico del estudiante.</p>
-      <button class="go-btn">→</button>
-    </div>
-
-    <div class="card">
-      <h3>Talleres</h3>
-      <p>Inscripción y gestión de actividades extracurriculares.</p>
-      <button class="go-btn">→</button>
-    </div>
-
-    <div class="card">
-      <h3>Reportes</h3>
-      <p>Estadísticas académicas y análisis institucional.</p>
-      <button class="go-btn">→</button>
-    </div>
-
-    <div class="card">
-      <h3>Murales</h3>
-      <p>Publicaciones, avisos y comunicados oficiales.</p>
-      <button class="go-btn">→</button>
-    </div>
-
-  </section>
+  </main>
 
 </div>
