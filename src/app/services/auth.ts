@@ -1,29 +1,58 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+
+export interface LoginResponse {
+  token: string;
+  type: string;
+  username: string;
+  nombre: string;
+  role: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  login(email: string, password: string): Observable<any> {
+  private apiUrl = 'http://localhost:8081';
 
-    // USUARIO MOCK
-    if (email === 'admin@raquitich.cl') {
+  constructor(private http: HttpClient) {}
 
-      if (password === '1234') {
-        return of({
-          token: 'fake-jwt-token'
-        });
-      }
+  login(identifier: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, {
+      username: identifier,   // el backend acepta username o email
+      password: password
+    }).pipe(
+      tap(response => {
+        localStorage.setItem('token',    response.token);
+        localStorage.setItem('username', response.username);
+        localStorage.setItem('nombre',   response.nombre);
+        localStorage.setItem('role',     response.role);
+      })
+    );
+  }
 
-      return throwError(() => ({
-        status: 401
-      }));
-    }
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('nombre');
+    localStorage.removeItem('role');
+  }
 
-    return throwError(() => ({
-      status: 404
-    }));
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  getNombre(): string {
+    return localStorage.getItem('nombre') ?? 'Usuario';
+  }
+
+  getRole(): string {
+    return localStorage.getItem('role') ?? '';
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 }

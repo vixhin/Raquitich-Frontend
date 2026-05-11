@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-home',
@@ -10,25 +12,12 @@ import { CommonModule } from '@angular/common';
 })
 export class HomeComponent {
 
-  // USUARIO
-  usuario = {
-    nombre: 'Administrador',
-    rol: 'Director Académico'
-  };
+  nombre: string = '';
+  rol: string    = '';
+  inicial: string = '';
 
-  // MENU ACTIVO
   activeMenu: string = '';
 
-  // ABRIR / CERRAR MENUS
-  toggleMenu(menu: string) {
-    if (this.activeMenu === menu) {
-      this.activeMenu = '';
-    } else {
-      this.activeMenu = menu;
-    }
-  }
-
-  // TARJETAS HOME
   modulos = [
     {
       titulo: 'Gestión Estudiantes',
@@ -68,4 +57,31 @@ export class HomeComponent {
     }
   ];
 
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.nombre  = this.authService.getNombre();
+    this.rol     = this.formatearRol(this.authService.getRole());
+    this.inicial = this.nombre.charAt(0).toUpperCase();
+  }
+
+  toggleMenu(menu: string) {
+    this.activeMenu = this.activeMenu === menu ? '' : menu;
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/']);
+  }
+
+  private formatearRol(role: string): string {
+    const roles: Record<string, string> = {
+      'ROLE_ADMIN':      'Administrador',
+      'ROLE_DIRECTIVO':  'Director Académico',
+      'ROLE_DOCENTE':    'Docente',
+      'ROLE_ESTUDIANTE': 'Estudiante'
+    };
+    return roles[role] ?? role;
+  }
 }

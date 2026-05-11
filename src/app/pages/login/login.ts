@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
@@ -12,38 +13,35 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
-  email: string = '';
+  email: string    = '';
   password: string = '';
-  error: string = '';
+  error: string    = '';
+  cargando: boolean = false;
 
-  // USUARIO FALSO TEMPORAL
-  usuarioMock = {
-    email: 'admin@raquitich.cl',
-    password: '1234'
-  };
-
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   login() {
+    this.error    = '';
+    this.cargando = true;
 
-    this.error = '';
-
-    // VALIDAR CORREO
-    if (this.email !== this.usuarioMock.email) {
-      this.error = 'Cuenta no existente';
-      return;
-    }
-
-    // VALIDAR PASSWORD
-    if (this.password !== this.usuarioMock.password) {
-      this.error = 'Contraseña incorrecta';
-      return;
-    }
-
-    // LOGIN CORRECTO
-    localStorage.setItem('token', 'fake-jwt-token');
-
-    // REDIRIGE AL HOME
-    this.router.navigate(['/home']);
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        this.cargando = false;
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        this.cargando = false;
+        if (err.status === 401 || err.status === 409) {
+          this.error = 'Correo o contraseña incorrectos';
+        } else if (err.status === 0) {
+          this.error = 'No se puede conectar al servidor';
+        } else {
+          this.error = 'Error al iniciar sesión, intente nuevamente';
+        }
+      }
+    });
   }
 }

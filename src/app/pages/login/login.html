@@ -14,16 +14,19 @@
       type="email"
       placeholder="Correo institucional"
       [(ngModel)]="email"
+      [disabled]="cargando"
     >
 
     <input
       type="password"
       placeholder="Contraseña"
       [(ngModel)]="password"
+      [disabled]="cargando"
+      (keyup.enter)="login()"
     >
 
-    <button (click)="login()">
-      Iniciar sesión
+    <button (click)="login()" [disabled]="cargando">
+      {{ cargando ? 'Iniciando sesión...' : 'Iniciar sesión' }}
     </button>
 
     <div class="error" *ngIf="error">
