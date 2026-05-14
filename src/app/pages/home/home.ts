@@ -12,58 +12,23 @@ import { AuthService } from '../../services/auth';
 })
 export class HomeComponent {
 
-  nombre: string = '';
-  rol: string    = '';
-  inicial: string = '';
+  nombre: string      = '';
+  rol: string         = '';
+  inicial: string     = '';
+  esEstudiante: boolean = false;
+  tituloPortal: string  = '';
 
   activeMenu: string = '';
-
-  modulos = [
-    {
-      titulo: 'Gestión Estudiantes',
-      descripcion: 'Administración completa de estudiantes y fichas académicas.',
-      icono: 'school',
-      color: 'blue'
-    },
-    {
-      titulo: 'Gestión Académica',
-      descripcion: 'Control de asignaturas, docentes y horarios.',
-      icono: 'menu_book',
-      color: 'green'
-    },
-    {
-      titulo: 'Calificaciones',
-      descripcion: 'Notas, evaluaciones y seguimiento académico.',
-      icono: 'grading',
-      color: 'orange'
-    },
-    {
-      titulo: 'Mensajería',
-      descripcion: 'Comunicación institucional entre usuarios.',
-      icono: 'forum',
-      color: 'blue'
-    },
-    {
-      titulo: 'Calendario',
-      descripcion: 'Eventos académicos y actividades importantes.',
-      icono: 'calendar_month',
-      color: 'green'
-    },
-    {
-      titulo: 'Reportes',
-      descripcion: 'Reportes administrativos y estadísticas.',
-      icono: 'bar_chart',
-      color: 'orange'
-    }
-  ];
 
   constructor(
     private authService: AuthService,
     private router: Router
   ) {
-    this.nombre  = this.authService.getNombre();
-    this.rol     = this.formatearRol(this.authService.getRole());
-    this.inicial = this.nombre.charAt(0).toUpperCase();
+    this.nombre       = this.authService.getNombre();
+    this.rol          = this.formatearRol(this.authService.getRole());
+    this.inicial      = this.nombre.charAt(0).toUpperCase();
+    this.esEstudiante = this.authService.getRole() === 'ROLE_ESTUDIANTE';
+    this.tituloPortal = this.esEstudiante ? 'Portal Estudiantil' : 'Panel Administrativo';
   }
 
   irA(ruta: string) {

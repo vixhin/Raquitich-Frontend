@@ -14,7 +14,7 @@
     <div class="menu">
 
       <!-- ESTUDIANTES -->
-      <div class="menu-item" [class.active]="activeMenu === 'estudiantes'">
+      <div class="menu-item" *ngIf="!esEstudiante" [class.active]="activeMenu === 'estudiantes'">
 
         <div class="menu-title" (click)="toggleMenu('estudiantes')">
 
@@ -40,7 +40,7 @@
       </div>
 
       <!-- GESTION ACADEMICA -->
-      <div class="menu-item" [class.active]="activeMenu === 'academico'">
+      <div class="menu-item" *ngIf="!esEstudiante" [class.active]="activeMenu === 'academico'">
 
         <div class="menu-title" (click)="irA('/academica')"  style="cursor:pointer">
 
@@ -248,8 +248,8 @@
     <div class="topbar">
 
       <div>
-        <h1>Bienvenido, {{ nombre }}</h1>
-        <p>Universidad Raquitich · {{ rol }}</p>
+        <h1>{{ tituloPortal }}</h1>
+        <p>Bienvenido, {{ nombre }} · {{ rol }}</p>
       </div>
 
       <div class="top-actions">
@@ -286,7 +286,7 @@
     <!-- CARDS -->
     <div class="cards-grid">
 
-      <div class="card">
+      <div class="card" *ngIf="!esEstudiante">
         <div>
           <div class="card-icon blue">
             <span class="material-icons">school</span>
@@ -311,7 +311,7 @@
         </button>
       </div>
 
-      <div class="card">
+      <div class="card" *ngIf="!esEstudiante">
         <div>
           <div class="card-icon green">
             <span class="material-icons">menu_book</span>
