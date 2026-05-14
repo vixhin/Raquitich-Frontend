@@ -42,7 +42,7 @@
       <!-- GESTION ACADEMICA -->
       <div class="menu-item" [class.active]="activeMenu === 'academico'">
 
-        <div class="menu-title" (click)="toggleMenu('academico')">
+        <div class="menu-title" (click)="irA('/academica')"  style="cursor:pointer">
 
           <div class="title-left">
             <span class="material-icons icon">menu_book</span>
@@ -330,7 +330,7 @@
           </ul>
         </div>
 
-        <button>
+        <button (click)="irA('/academica')">
           Ingresar
           <span class="material-icons">arrow_forward</span>
         </button>

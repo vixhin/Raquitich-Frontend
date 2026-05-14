@@ -1,0 +1,327 @@
+<div class="academica-container">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+
+    <div class="topbar-left">
+      <button class="btn-back" (click)="volver()">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div>
+        <h1>Gestión Académica</h1>
+        <p>Universidad Raquitich</p>
+      </div>
+    </div>
+
+    <div class="profile-box">
+      <div class="profile-avatar">{{ inicial }}</div>
+      <span>{{ nombre }}</span>
+    </div>
+
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button [class.active]="tab === 'asignaturas'" (click)="tab = 'asignaturas'">
+      <span class="material-icons">menu_book</span>
+      Asignaturas
+    </button>
+    <button [class.active]="tab === 'secciones'" (click)="tab = 'secciones'">
+      <span class="material-icons">class</span>
+      Secciones
+    </button>
+    <button [class.active]="tab === 'inscripciones'" (click)="tab = 'inscripciones'">
+      <span class="material-icons">group_add</span>
+      Inscripciones
+    </button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ── TAB ASIGNATURAS ─────────────────────────────────────────────── -->
+    <div *ngIf="tab === 'asignaturas'">
+
+      <div class="section-header">
+        <h2>Asignaturas</h2>
+        <p>Administra el catálogo de asignaturas disponibles</p>
+      </div>
+
+      <!-- Formulario -->
+      <div class="card-form">
+        <h3>{{ editandoAsig ? 'Editar asignatura' : 'Nueva asignatura' }}</h3>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Código</label>
+            <input type="text" [(ngModel)]="formAsig.codigo" placeholder="Ej: MAT101" [disabled]="!!editandoAsig">
+          </div>
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" [(ngModel)]="formAsig.nombre" placeholder="Ej: Matemáticas I">
+          </div>
+          <div class="form-group">
+            <label>Créditos</label>
+            <input type="number" [(ngModel)]="formAsig.creditos" min="1" max="10">
+          </div>
+          <div class="form-group full">
+            <label>Descripción</label>
+            <input type="text" [(ngModel)]="formAsig.descripcion" placeholder="Descripción breve">
+          </div>
+        </div>
+
+        <div class="alert-error" *ngIf="errorAsig">{{ errorAsig }}</div>
+
+        <div class="form-actions">
+          <button class="btn-primary" (click)="guardarAsignatura()" [disabled]="cargandoAsig">
+            <span class="material-icons">{{ editandoAsig ? 'save' : 'add' }}</span>
+            {{ editandoAsig ? 'Guardar cambios' : 'Crear asignatura' }}
+          </button>
+          <button class="btn-secondary" *ngIf="editandoAsig" (click)="resetFormAsig()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Créditos</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of asignaturas">
+              <td><span class="badge blue">{{ a.codigo }}</span></td>
+              <td>{{ a.nombre }}</td>
+              <td>{{ a.descripcion || '—' }}</td>
+              <td>{{ a.creditos }}</td>
+              <td><span class="badge" [class.green]="a.activa" [class.red]="!a.activa">{{ a.activa ? 'Activa' : 'Inactiva' }}</span></td>
+              <td>
+                <button class="icon-btn" title="Editar" (click)="editarAsignatura(a)">
+                  <span class="material-icons">edit</span>
+                </button>
+                <button class="icon-btn danger" title="Desactivar" (click)="eliminarAsignatura(a.id)">
+                  <span class="material-icons">block</span>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="asignaturas.length === 0">
+              <td colspan="6" class="empty">No hay asignaturas registradas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- ── TAB SECCIONES ───────────────────────────────────────────────── -->
+    <div *ngIf="tab === 'secciones'">
+
+      <div class="section-header">
+        <h2>Secciones</h2>
+        <p>Crea secciones, asigna docentes y gestiona horarios</p>
+      </div>
+
+      <!-- Formulario -->
+      <div class="card-form">
+        <h3>{{ editandoSeccion ? 'Editar sección' : 'Nueva sección' }}</h3>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Asignatura</label>
+            <select [(ngModel)]="formSeccion.asignaturaId">
+              <option value="0" disabled>Seleccionar asignatura</option>
+              <option *ngFor="let a of asignaturas" [value]="a.id">{{ a.codigo }} - {{ a.nombre }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Período</label>
+            <input type="text" [(ngModel)]="formSeccion.periodo" placeholder="Ej: 2026-1">
+          </div>
+          <div class="form-group">
+            <label>Cupo máximo</label>
+            <input type="number" [(ngModel)]="formSeccion.cupoMaximo" min="1">
+          </div>
+          <div class="form-group">
+            <label>Docente (username)</label>
+            <input type="text" [(ngModel)]="formSeccion.docenteUsername" placeholder="Ej: prof.garcia">
+          </div>
+        </div>
+
+        <div class="alert-error" *ngIf="errorSeccion">{{ errorSeccion }}</div>
+
+        <div class="form-actions">
+          <button class="btn-primary" (click)="guardarSeccion()" [disabled]="cargandoSeccion">
+            <span class="material-icons">{{ editandoSeccion ? 'save' : 'add' }}</span>
+            {{ editandoSeccion ? 'Guardar cambios' : 'Crear sección' }}
+          </button>
+          <button class="btn-secondary" *ngIf="editandoSeccion" (click)="resetFormSeccion()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla secciones -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Asignatura</th>
+              <th>Período</th>
+              <th>Docente</th>
+              <th>Cupo</th>
+              <th>Inscritos</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let s of secciones">
+              <tr>
+                <td>
+                  <span class="badge blue">{{ s.asignaturaCodigo }}</span>
+                  {{ s.asignaturaNombre }}
+                </td>
+                <td>{{ s.periodo }}</td>
+                <td>{{ s.docenteUsername || '—' }}</td>
+                <td>{{ s.cupoMaximo }}</td>
+                <td>{{ s.cantidadInscritos }}</td>
+                <td><span class="badge" [class.green]="s.activa" [class.red]="!s.activa">{{ s.activa ? 'Activa' : 'Inactiva' }}</span></td>
+                <td>
+                  <button class="icon-btn" title="Editar" (click)="editarSeccion(s)">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="icon-btn" title="Ver horarios" (click)="verHorarios(s)">
+                    <span class="material-icons">schedule</span>
+                  </button>
+                  <button class="icon-btn" title="Inscripciones" (click)="verInscritos(s)">
+                    <span class="material-icons">group</span>
+                  </button>
+                  <button class="icon-btn danger" title="Desactivar" (click)="eliminarSeccion(s.id)">
+                    <span class="material-icons">block</span>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Horarios expandibles -->
+              <tr *ngIf="seccionSeleccionada?.id === s.id" class="horarios-row">
+                <td colspan="7">
+                  <div class="horarios-panel">
+                    <h4><span class="material-icons">schedule</span> Horarios de {{ s.asignaturaNombre }}</h4>
+
+                    <div class="horario-list">
+                      <div class="horario-item" *ngFor="let h of s.horarios">
+                        <span class="badge blue">{{ h.diaSemana }}</span>
+                        <span>{{ h.horaInicio }} - {{ h.horaFin }}</span>
+                        <span *ngIf="h.sala">· Sala {{ h.sala }}</span>
+                        <button class="icon-btn danger sm" (click)="eliminarHorario(s.id, h.id)">
+                          <span class="material-icons">close</span>
+                        </button>
+                      </div>
+                      <p *ngIf="s.horarios.length === 0" class="empty-small">Sin horarios asignados</p>
+                    </div>
+
+                    <div class="horario-form">
+                      <select [(ngModel)]="formHorario.diaSemana">
+                        <option *ngFor="let d of dias" [value]="d">{{ d }}</option>
+                      </select>
+                      <input type="time" [(ngModel)]="formHorario.horaInicio">
+                      <input type="time" [(ngModel)]="formHorario.horaFin">
+                      <input type="text" [(ngModel)]="formHorario.sala" placeholder="Sala (opcional)">
+                      <button class="btn-primary sm" (click)="agregarHorario(s.id)">
+                        <span class="material-icons">add</span>
+                        Agregar
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <tr *ngIf="secciones.length === 0">
+              <td colspan="7" class="empty">No hay secciones registradas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- ── TAB INSCRIPCIONES ───────────────────────────────────────────── -->
+    <div *ngIf="tab === 'inscripciones'">
+
+      <div class="section-header">
+        <h2>Inscripciones</h2>
+        <p *ngIf="seccionParaInscritos">
+          Sección: <strong>{{ seccionParaInscritos.asignaturaCodigo }} - {{ seccionParaInscritos.asignaturaNombre }}</strong>
+          · Período {{ seccionParaInscritos.periodo }}
+        </p>
+        <p *ngIf="!seccionParaInscritos">Selecciona una sección desde el tab <strong>Secciones</strong></p>
+      </div>
+
+      <div *ngIf="seccionParaInscritos">
+
+        <!-- Agregar estudiante -->
+        <div class="card-form">
+          <h3>Inscribir estudiante</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Username del estudiante</label>
+              <input type="text" [(ngModel)]="nuevoEstudiante" placeholder="Ej: Vicente"
+                     (keyup.enter)="inscribir()">
+            </div>
+          </div>
+          <div class="alert-error" *ngIf="errorInscripcion">{{ errorInscripcion }}</div>
+          <div class="form-actions">
+            <button class="btn-primary" (click)="inscribir()">
+              <span class="material-icons">person_add</span>
+              Inscribir
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista inscritos -->
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Estudiante</th>
+                <th>Fecha inscripción</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let i of inscritos; let idx = index">
+                <td>{{ idx + 1 }}</td>
+                <td>{{ i.estudianteUsername }}</td>
+                <td>{{ i.fechaInscripcion | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td><span class="badge" [class.green]="i.activa" [class.red]="!i.activa">{{ i.activa ? 'Activo' : 'Retirado' }}</span></td>
+                <td>
+                  <button class="icon-btn danger" *ngIf="i.activa" title="Retirar" (click)="eliminarInscripcion(i.id)">
+                    <span class="material-icons">person_remove</span>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="inscritos.length === 0">
+                <td colspan="5" class="empty">Sin estudiantes inscritos</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

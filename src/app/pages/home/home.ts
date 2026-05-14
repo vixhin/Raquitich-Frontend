@@ -66,6 +66,10 @@ export class HomeComponent {
     this.inicial = this.nombre.charAt(0).toUpperCase();
   }
 
+  irA(ruta: string) {
+    this.router.navigate([ruta]);
+  }
+
   toggleMenu(menu: string) {
     this.activeMenu = this.activeMenu === menu ? '' : menu;
   }
