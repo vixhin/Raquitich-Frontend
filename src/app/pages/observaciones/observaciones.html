@@ -1,0 +1,95 @@
+<div class="obs-container">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="btn-back" (click)="volver()">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div>
+        <h1>Observaciones y Seguimiento</h1>
+        <p>{{ esEstudiante() ? 'Mis observaciones' : 'Registro de anotaciones' }}</p>
+      </div>
+    </div>
+    <div class="profile-box">
+      <div class="avatar">{{ inicial }}</div>
+      <span>{{ nombre }}</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ACCIONES (solo docente/directivo) -->
+    <div class="actions-bar" *ngIf="!esEstudiante()">
+      <button class="btn-primary" (click)="mostrarForm = !mostrarForm">
+        <span class="material-icons">{{ mostrarForm ? 'close' : 'add' }}</span>
+        {{ mostrarForm ? 'Cancelar' : 'Nueva observación' }}
+      </button>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="card-form" *ngIf="mostrarForm && !esEstudiante()">
+      <h3>Nueva observación</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Username estudiante</label>
+          <input type="text" [(ngModel)]="form.estudianteUsername" placeholder="Ej: Vicente">
+        </div>
+        <div class="form-group">
+          <label>Tipo</label>
+          <select [(ngModel)]="form.tipo">
+            <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" [(ngModel)]="form.fechaObservacion">
+        </div>
+        <div class="form-group full">
+          <label>Título</label>
+          <input type="text" [(ngModel)]="form.titulo" placeholder="Título breve">
+        </div>
+        <div class="form-group full">
+          <label>Contenido</label>
+          <textarea [(ngModel)]="form.contenido" rows="4" placeholder="Descripción detallada..."></textarea>
+        </div>
+      </div>
+      <div class="alert-error" *ngIf="errorForm">{{ errorForm }}</div>
+      <button class="btn-primary" (click)="guardar()" [disabled]="guardando">
+        <span class="material-icons">save</span>
+        {{ guardando ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+
+    <!-- LISTA -->
+    <div class="alert-error" *ngIf="error">{{ error }}</div>
+    <p *ngIf="cargando" class="loading">Cargando...</p>
+
+    <div class="obs-list" *ngIf="!cargando">
+
+      <div class="obs-card" *ngFor="let o of observaciones">
+        <div class="obs-header">
+          <span class="badge" [class]="colorTipo(o.tipo)">{{ o.tipo }}</span>
+          <span class="fecha">{{ o.fechaObservacion }}</span>
+          <button class="btn-delete" *ngIf="esDirectivo()" (click)="eliminar(o.id)" title="Eliminar">
+            <span class="material-icons">delete</span>
+          </button>
+        </div>
+        <h3>{{ o.titulo }}</h3>
+        <p class="contenido">{{ o.contenido }}</p>
+        <div class="obs-footer">
+          <span><strong>Estudiante:</strong> {{ o.estudianteUsername }}</span>
+          <span><strong>Autor:</strong> {{ o.autorUsername }}</span>
+        </div>
+      </div>
+
+      <div class="empty" *ngIf="observaciones.length === 0">
+        <span class="material-icons">inbox</span>
+        <p>No hay observaciones registradas</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

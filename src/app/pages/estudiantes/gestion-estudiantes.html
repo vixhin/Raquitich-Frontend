@@ -1,0 +1,184 @@
+<div class="est-container">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="btn-back" (click)="volver()">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div>
+        <h1>Gestión de Estudiantes</h1>
+        <p>{{ esEstudiante() ? 'Mi perfil estudiantil' : esDocente() ? 'Consulta de estudiantes' : 'Registro y administración' }}</p>
+      </div>
+    </div>
+    <div class="profile-box">
+      <div class="avatar">{{ inicial }}</div>
+      <span>{{ nombre }}</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- VISTA ESTUDIANTE: solo ve su propio perfil -->
+    <div *ngIf="esEstudiante()">
+      <p *ngIf="cargandoPerfil" class="loading">Cargando tu perfil...</p>
+
+      <div class="perfil-card" *ngIf="!cargandoPerfil && miPerfil">
+        <div class="perfil-header">
+          <div class="perfil-avatar">{{ inicial }}</div>
+          <div>
+            <h2>{{ miPerfil.nombre }}</h2>
+            <p class="username">@{{ miPerfil.username }}</p>
+            <span class="badge" [class.green]="miPerfil.activo" [class.red]="!miPerfil.activo">
+              {{ miPerfil.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </div>
+        </div>
+        <div class="perfil-grid">
+          <div class="perfil-item">
+            <span class="perfil-label">Email</span>
+            <span class="perfil-value">{{ miPerfil.email }}</span>
+          </div>
+          <div class="perfil-item">
+            <span class="perfil-label">N° Matrícula</span>
+            <span class="perfil-value">{{ miPerfil.numeroMatricula || 'No registrado' }}</span>
+          </div>
+          <div class="perfil-item">
+            <span class="perfil-label">Carrera</span>
+            <span class="perfil-value">{{ miPerfil.carrera || 'No registrada' }}</span>
+          </div>
+          <div class="perfil-item">
+            <span class="perfil-label">Año de ingreso</span>
+            <span class="perfil-value">{{ miPerfil.anioIngreso || 'No registrado' }}</span>
+          </div>
+          <div class="perfil-item">
+            <span class="perfil-label">Fecha de nacimiento</span>
+            <span class="perfil-value">{{ miPerfil.fechaNacimiento || 'No registrada' }}</span>
+          </div>
+          <div class="perfil-item">
+            <span class="perfil-label">Fecha de matrícula</span>
+            <span class="perfil-value">{{ miPerfil.creadoEn | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty" *ngIf="!cargandoPerfil && !miPerfil">
+        <span class="material-icons">person_off</span>
+        <p>No se encontró tu perfil</p>
+      </div>
+    </div>
+
+    <!-- VISTA DOCENTE / DIRECTIVO / ADMIN -->
+    <div *ngIf="!esEstudiante()">
+
+      <div class="actions-bar">
+        <button class="btn-primary" *ngIf="esDirectivo()" (click)="mostrarForm = !mostrarForm">
+          <span class="material-icons"> </span>
+          {{ mostrarForm ? 'Cancelar' : 'Nuevo estudiante' }}
+        </button>
+        <input class="buscador" type="text" [(ngModel)]="textoBusqueda" placeholder="Buscar por rut, nombre o matrícula...">
+      </div>
+
+      <!-- FORMULARIO -->
+      <div class="card-form" *ngIf="mostrarForm && esDirectivo()">
+        <h3>{{ modoEditar ? 'Editar estudiante' : 'Nuevo estudiante' }}</h3>
+        <div class="form-grid">
+          <div class="form-group" *ngIf="!modoEditar">
+            <label>Username</label>
+            <input type="text" [(ngModel)]="form.username" placeholder="ej: juan.perez">
+          </div>
+          <div class="form-group" *ngIf="!modoEditar">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="form.email" placeholder="correo@raquitich.cl">
+          </div>
+          <div class="form-group" *ngIf="!modoEditar">
+            <label>Contraseña</label>
+            <input type="password" [(ngModel)]="form.password" placeholder="Mínimo 8 caracteres">
+          </div>
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <input type="text" [(ngModel)]="form.nombre" placeholder="Nombre y apellido">
+          </div>
+          <div class="form-group">
+            <label>N° Matrícula</label>
+            <input type="text" [(ngModel)]="form.numeroMatricula" placeholder="MAT-2024-001">
+          </div>
+          <div class="form-group">
+            <label>Carrera</label>
+            <input type="text" [(ngModel)]="form.carrera" placeholder="Ingeniería Informática">
+          </div>
+          <div class="form-group">
+            <label>Año de ingreso</label>
+            <input type="number" [(ngModel)]="form.anioIngreso" placeholder="2024">
+          </div>
+          <div class="form-group">
+            <label>Fecha de nacimiento</label>
+            <input type="date" [(ngModel)]="form.fechaNacimiento">
+          </div>
+        </div>
+        <div class="alert-error" *ngIf="errorForm">{{ errorForm }}</div>
+        <button class="btn-primary" (click)="guardar()" [disabled]="guardando">
+          <span class="material-icons"> </span>
+          {{ guardando ? 'Guardando...' : (modoEditar ? 'Actualizar' : 'Crear estudiante') }}
+        </button>
+      </div>
+      
+      <div class="alert-success" *ngIf="mensajeExito">{{ mensajeExito }}</div>
+      <div class="alert-error" *ngIf="error">{{ error }}</div>
+      <p *ngIf="cargando" class="loading">Cargando estudiantes...</p>
+
+      <!-- TABLA -->
+      <div class="tabla-wrapper" *ngIf="!cargando">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Estudiante</th>
+              <th>Email</th>
+              <th>Matrícula</th>
+              <th>Carrera</th>
+              <th>Ingreso</th>
+              <th>Estado</th>
+              <th *ngIf="esDirectivo()">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of estudiantesFiltrados">
+              <td>
+                <div class="est-info">
+                  <div class="est-avatar">{{ e.nombre.charAt(0).toUpperCase() }}</div>
+                  <div>
+                    <div class="est-nombre">{{ e.nombre }}</div>
+                    <div class="est-username">@{{ e.username }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>{{ e.email }}</td>
+              <td>{{ e.numeroMatricula || '—' }}</td>
+              <td>{{ e.carrera || '—' }}</td>
+              <td>{{ e.anioIngreso || '—' }}</td>
+              <td>
+                <span class="badge" [class.green]="e.activo" [class.red]="!e.activo">
+                  {{ e.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td *ngIf="esDirectivo()">
+                <div class="acciones">
+                  <button class="btn-icon edit" (click)="editar(e)" title="Editar">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="btn-icon delete" (click)="desactivar(e.id)" title="Desactivar">
+                    <span class="material-icons">person_off</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="empty" *ngIf="estudiantesFiltrados.length === 0">
+          <span class="material-icons"> </span>
+          <p>{{ textoBusqueda ? 'Sin resultados para "' + textoBusqueda + '"' : 'No hay estudiantes registrados' }}</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
