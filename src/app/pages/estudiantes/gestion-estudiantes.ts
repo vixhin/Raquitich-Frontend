@@ -36,6 +36,7 @@ export class GestionEstudiantesComponent implements OnInit {
 
   form = {
     username: '',
+    rut: '',
     email: '',
     password: '',
     nombre: '',
@@ -92,6 +93,7 @@ export class GestionEstudiantesComponent implements OnInit {
     if (this.modoEditar && this.idEditando !== null) {
       const datos = {
         nombre:          this.form.nombre,
+        rut:             this.form.rut || null,
         fechaNacimiento: this.form.fechaNacimiento || null,
         numeroMatricula: this.form.numeroMatricula || null,
         carrera:         this.form.carrera || null,
@@ -104,6 +106,7 @@ export class GestionEstudiantesComponent implements OnInit {
     } else {
       const datos = {
         username:        this.form.username,
+        rut:             this.form.rut || null,
         email:           this.form.email,
         password:        this.form.password,
         nombre:          this.form.nombre,
@@ -137,6 +140,7 @@ export class GestionEstudiantesComponent implements OnInit {
     this.mostrarForm      = true;
     this.errorForm        = '';
     this.form.nombre          = e.nombre;
+    this.form.rut             = e.rut ?? '';
     this.form.fechaNacimiento = e.fechaNacimiento ?? '';
     this.form.numeroMatricula = e.numeroMatricula ?? '';
     this.form.carrera         = e.carrera ?? '';
@@ -155,7 +159,7 @@ export class GestionEstudiantesComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.form = { username: '', email: '', password: '', nombre: '', fechaNacimiento: '', numeroMatricula: '', carrera: '', anioIngreso: null };
+    this.form = { username: '', rut: '', email: '', password: '', nombre: '', fechaNacimiento: '', numeroMatricula: '', carrera: '', anioIngreso: null };
     this.mostrarForm = false;
     this.modoEditar  = false;
     this.guardando   = false;

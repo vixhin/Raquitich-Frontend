@@ -35,6 +35,10 @@
         </div>
         <div class="perfil-grid">
           <div class="perfil-item">
+            <span class="perfil-label">RUT</span>
+            <span class="perfil-value">{{ miPerfil.rut || 'No registrado' }}</span>
+          </div>
+          <div class="perfil-item">
             <span class="perfil-label">Email</span>
             <span class="perfil-value">{{ miPerfil.email }}</span>
           </div>
@@ -99,6 +103,10 @@
             <input type="text" [(ngModel)]="form.nombre" placeholder="Nombre y apellido">
           </div>
           <div class="form-group">
+            <label>RUT</label>
+            <input type="text" [(ngModel)]="form.rut" placeholder="12.345.678-9">
+          </div>
+          <div class="form-group">
             <label>N° Matrícula</label>
             <input type="text" [(ngModel)]="form.numeroMatricula" placeholder="MAT-2024-001">
           </div>
@@ -132,6 +140,7 @@
           <thead>
             <tr>
               <th>Estudiante</th>
+              <th>RUT</th>
               <th>Email</th>
               <th>Matrícula</th>
               <th>Carrera</th>
@@ -151,6 +160,7 @@
                   </div>
                 </div>
               </td>
+              <td>{{ e.rut || '—' }}</td>
               <td>{{ e.email }}</td>
               <td>{{ e.numeroMatricula || '—' }}</td>
               <td>{{ e.carrera || '—' }}</td>
@@ -166,7 +176,7 @@
                     <span class="material-icons">edit</span>
                   </button>
                   <button class="btn-icon delete" (click)="desactivar(e.id)" title="Desactivar">
-                    <span class="material-icons">person_off</span>
+                    <span class="material-icons">delete</span>
                   </button>
                 </div>
               </td>

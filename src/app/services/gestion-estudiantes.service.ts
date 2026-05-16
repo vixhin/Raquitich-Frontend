@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface Estudiante {
   id: number;
   username: string;
+  rut: string | null;
   email: string;
   nombre: string;
   fechaNacimiento: string | null;
