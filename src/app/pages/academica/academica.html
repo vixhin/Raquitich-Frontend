@@ -9,7 +9,7 @@
       </button>
       <div>
         <h1>Gestión Académica</h1>
-        <p>Universidad Raquitich</p>
+        <p>{{ esEstudiante() ? 'Consulta de asignaturas y secciones' : esDocente() ? 'Mis secciones asignadas' : 'Administración académica completa' }}</p>
       </div>
     </div>
 
@@ -28,9 +28,10 @@
     </button>
     <button [class.active]="tab === 'secciones'" (click)="tab = 'secciones'">
       <span class="material-icons">class</span>
-      Secciones
+      {{ esDocente() ? 'Mis secciones' : 'Secciones' }}
     </button>
-    <button [class.active]="tab === 'inscripciones'" (click)="tab = 'inscripciones'">
+    <!-- Inscripciones solo para directivo -->
+    <button *ngIf="esDirectivo()" [class.active]="tab === 'inscripciones'" (click)="tab = 'inscripciones'">
       <span class="material-icons">group_add</span>
       Inscripciones
     </button>
@@ -44,11 +45,11 @@
 
       <div class="section-header">
         <h2>Asignaturas</h2>
-        <p>Administra el catálogo de asignaturas disponibles</p>
+        <p>{{ esDirectivo() ? 'Administra el catálogo de asignaturas disponibles' : 'Catálogo de asignaturas disponibles' }}</p>
       </div>
 
-      <!-- Formulario -->
-      <div class="card-form">
+      <!-- Formulario solo para directivo -->
+      <div class="card-form" *ngIf="esDirectivo()">
         <h3>{{ editandoAsig ? 'Editar asignatura' : 'Nueva asignatura' }}</h3>
 
         <div class="form-grid">
@@ -83,6 +84,8 @@
         </div>
       </div>
 
+      <div class="alert-error" *ngIf="errorAsig && !esDirectivo()">{{ errorAsig }}</div>
+
       <!-- Tabla -->
       <div class="table-wrapper">
         <table>
@@ -93,7 +96,7 @@
               <th>Descripción</th>
               <th>Créditos</th>
               <th>Estado</th>
-              <th>Acciones</th>
+              <th *ngIf="esDirectivo()">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -103,7 +106,7 @@
               <td>{{ a.descripcion || '—' }}</td>
               <td>{{ a.creditos }}</td>
               <td><span class="badge" [class.green]="a.activa" [class.red]="!a.activa">{{ a.activa ? 'Activa' : 'Inactiva' }}</span></td>
-              <td>
+              <td *ngIf="esDirectivo()">
                 <button class="icon-btn" title="Editar" (click)="editarAsignatura(a)">
                   <span class="material-icons">edit</span>
                 </button>
@@ -125,12 +128,12 @@
     <div *ngIf="tab === 'secciones'">
 
       <div class="section-header">
-        <h2>Secciones</h2>
-        <p>Crea secciones, asigna docentes y gestiona horarios</p>
+        <h2>{{ esDocente() ? 'Mis secciones' : 'Secciones' }}</h2>
+        <p>{{ esDirectivo() ? 'Crea secciones, asigna docentes y gestiona horarios' : esDocente() ? 'Secciones en las que eres docente' : 'Secciones disponibles' }}</p>
       </div>
 
-      <!-- Formulario -->
-      <div class="card-form">
+      <!-- Formulario solo para directivo -->
+      <div class="card-form" *ngIf="esDirectivo()">
         <h3>{{ editandoSeccion ? 'Editar sección' : 'Nueva sección' }}</h3>
 
         <div class="form-grid">
@@ -168,6 +171,8 @@
         </div>
       </div>
 
+      <div class="alert-error" *ngIf="errorSeccion && !esDirectivo()">{{ errorSeccion }}</div>
+
       <!-- Tabla secciones -->
       <div class="table-wrapper">
         <table>
@@ -183,7 +188,7 @@
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngFor="let s of secciones">
+            <ng-container *ngFor="let s of seccionesVisibles">
               <tr>
                 <td>
                   <span class="badge blue">{{ s.asignaturaCodigo }}</span>
@@ -195,23 +200,28 @@
                 <td>{{ s.cantidadInscritos }}</td>
                 <td><span class="badge" [class.green]="s.activa" [class.red]="!s.activa">{{ s.activa ? 'Activa' : 'Inactiva' }}</span></td>
                 <td>
-                  <button class="icon-btn" title="Editar" (click)="editarSeccion(s)">
+                  <!-- Editar y eliminar: solo directivo -->
+                  <button class="icon-btn" *ngIf="esDirectivo()" title="Editar" (click)="editarSeccion(s)">
                     <span class="material-icons">edit</span>
                   </button>
-                  <button class="icon-btn" title="Ver horarios" (click)="verHorarios(s)">
+                  <!-- Ver horarios: docente y directivo -->
+                  <button class="icon-btn" *ngIf="!esEstudiante()" title="Ver horarios" (click)="verHorarios(s)">
                     <span class="material-icons">schedule</span>
                   </button>
-                  <button class="icon-btn" title="Inscripciones" (click)="verInscritos(s)">
+                  <!-- Ver inscritos: directivo -->
+                  <button class="icon-btn" *ngIf="esDirectivo()" title="Inscripciones" (click)="verInscritos(s)">
                     <span class="material-icons">group</span>
                   </button>
-                  <button class="icon-btn danger" title="Desactivar" (click)="eliminarSeccion(s.id)">
+                  <button class="icon-btn danger" *ngIf="esDirectivo()" title="Desactivar" (click)="eliminarSeccion(s.id)">
                     <span class="material-icons">block</span>
                   </button>
+                  <!-- Estudiante: sin acciones -->
+                  <span *ngIf="esEstudiante()" class="text-muted">—</span>
                 </td>
               </tr>
 
-              <!-- Horarios expandibles -->
-              <tr *ngIf="seccionSeleccionada?.id === s.id" class="horarios-row">
+              <!-- Horarios expandibles: docente y directivo -->
+              <tr *ngIf="seccionSeleccionada?.id === s.id && !esEstudiante()" class="horarios-row">
                 <td colspan="7">
                   <div class="horarios-panel">
                     <h4><span class="material-icons">schedule</span> Horarios de {{ s.asignaturaNombre }}</h4>
@@ -221,14 +231,16 @@
                         <span class="badge blue">{{ h.diaSemana }}</span>
                         <span>{{ h.horaInicio }} - {{ h.horaFin }}</span>
                         <span *ngIf="h.sala">· Sala {{ h.sala }}</span>
-                        <button class="icon-btn danger sm" (click)="eliminarHorario(s.id, h.id)">
+                        <!-- Eliminar horario: solo directivo -->
+                        <button class="icon-btn danger sm" *ngIf="esDirectivo()" (click)="eliminarHorario(s.id, h.id)">
                           <span class="material-icons">close</span>
                         </button>
                       </div>
                       <p *ngIf="s.horarios.length === 0" class="empty-small">Sin horarios asignados</p>
                     </div>
 
-                    <div class="horario-form">
+                    <!-- Agregar horario: solo directivo -->
+                    <div class="horario-form" *ngIf="esDirectivo()">
                       <select [(ngModel)]="formHorario.diaSemana">
                         <option *ngFor="let d of dias" [value]="d">{{ d }}</option>
                       </select>
@@ -245,8 +257,10 @@
               </tr>
             </ng-container>
 
-            <tr *ngIf="secciones.length === 0">
-              <td colspan="7" class="empty">No hay secciones registradas</td>
+            <tr *ngIf="seccionesVisibles.length === 0">
+              <td colspan="7" class="empty">
+                {{ esDocente() ? 'No tienes secciones asignadas' : 'No hay secciones registradas' }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -254,8 +268,8 @@
 
     </div>
 
-    <!-- ── TAB INSCRIPCIONES ───────────────────────────────────────────── -->
-    <div *ngIf="tab === 'inscripciones'">
+    <!-- ── TAB INSCRIPCIONES (solo directivo) ────────────────────────────── -->
+    <div *ngIf="tab === 'inscripciones' && esDirectivo()">
 
       <div class="section-header">
         <h2>Inscripciones</h2>

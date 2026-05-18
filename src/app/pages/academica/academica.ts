@@ -22,7 +22,9 @@ export class AcademicaComponent implements OnInit {
 
   tab: 'asignaturas' | 'secciones' | 'inscripciones' = 'asignaturas';
 
+  rol: string = '';
   nombre: string = '';
+  username: string = '';
   inicial: string = '';
 
   // ── Asignaturas ────────────────────────────────────────────────────────────
@@ -57,8 +59,10 @@ export class AcademicaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.nombre  = this.authService.getNombre();
-    this.inicial = this.nombre.charAt(0).toUpperCase();
+    this.rol      = this.authService.getRole();
+    this.nombre   = this.authService.getNombre();
+    this.username = this.authService.getUsername();
+    this.inicial  = this.nombre.charAt(0).toUpperCase();
     this.cargarAsignaturas();
     this.cargarSecciones();
   }
@@ -215,5 +219,19 @@ export class AcademicaComponent implements OnInit {
 
   getNombreAsignatura(id: number): string {
     return this.asignaturas.find(a => a.id === id)?.nombre ?? '—';
+  }
+
+  // ── Helpers de rol ─────────────────────────────────────────────────────────
+
+  esEstudiante(): boolean { return this.rol === 'ROLE_ESTUDIANTE'; }
+  esDocente():    boolean { return this.rol === 'ROLE_DOCENTE'; }
+  esDirectivo():  boolean { return this.rol === 'ROLE_DIRECTIVO' || this.rol === 'ROLE_ADMIN'; }
+
+  // El docente solo ve sus propias secciones; directivo y estudiante ven todas
+  get seccionesVisibles(): Seccion[] {
+    if (this.esDocente()) {
+      return this.secciones.filter(s => s.docenteUsername === this.username);
+    }
+    return this.secciones;
   }
 }
