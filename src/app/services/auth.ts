@@ -53,11 +53,18 @@ export class AuthService {
   }
 
   getNombre(): string {
-    return localStorage.getItem('nombre') ?? 'Usuario';
+    const v = localStorage.getItem('nombre');
+    return (v && v !== 'undefined' && v !== 'null') ? v : 'Usuario';
   }
 
   getRole(): string {
-    return localStorage.getItem('role') ?? '';
+    const v = localStorage.getItem('role');
+    return (v && v !== 'undefined' && v !== 'null') ? v : '';
+  }
+
+  getUsername(): string {
+    const v = localStorage.getItem('username');
+    return (v && v !== 'undefined' && v !== 'null') ? v : '';
   }
 
   getToken(): string | null {

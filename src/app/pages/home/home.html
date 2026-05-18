@@ -15,51 +15,69 @@
 
       <!-- MI PERFIL (solo estudiante) -->
       <div class="menu-item" *ngIf="esEstudiante" [class.active]="activeMenu === 'perfil'">
-        <div class="menu-title" (click)="irA('/estudiantes')" style="cursor:pointer">
+        <div class="menu-title" (click)="toggleMenu('perfil')">
           <div class="title-left">
             <span class="material-icons icon">person</span>
             <span>Mi Perfil</span>
           </div>
+          <span class="material-icons arrow">expand_more</span>
+        </div>
+        <div class="submenu">
+          <a (click)="irA('/estudiantes')">Datos personales</a>
+          <a (click)="irA('/estudiantes')">Información académica</a>
+          <a (click)="irA('/estudiantes')">Estado de matrícula</a>
         </div>
       </div>
 
-      <!-- ESTUDIANTES (solo directivo) -->
+      <!-- ESTUDIANTES (directivo) -->
       <div class="menu-item" *ngIf="esDirectivo" [class.active]="activeMenu === 'estudiantes'">
-        <div class="menu-title" (click)="irA('/estudiantes')" style="cursor:pointer">
+        <div class="menu-title" (click)="toggleMenu('estudiantes')">
           <div class="title-left">
             <span class="material-icons icon">school</span>
             <span>Estudiantes</span>
           </div>
+          <span class="material-icons arrow">expand_more</span>
+        </div>
+        <div class="submenu">
+          <a (click)="irA('/estudiantes')">Registro de estudiantes</a>
+          <a (click)="irA('/estudiantes')">Consultar información</a>
+          <a (click)="irA('/estudiantes')">Seguimiento académico</a>
         </div>
       </div>
 
-      <!-- GESTION ACADEMICA (docente y directivo) -->
+      <!-- GESTIÓN ACADÉMICA (docente y directivo) -->
       <div class="menu-item" *ngIf="!esEstudiante" [class.active]="activeMenu === 'academico'">
-        <div class="menu-title" (click)="irA('/academica')" style="cursor:pointer">
+        <div class="menu-title" (click)="toggleMenu('academico')">
           <div class="title-left">
             <span class="material-icons icon">menu_book</span>
             <span>Gestión Académica</span>
           </div>
+          <span class="material-icons arrow">expand_more</span>
+        </div>
+        <div class="submenu">
+          <a *ngIf="esDocente"   (click)="irA('/academica')">Mis secciones</a>
+          <a *ngIf="esDocente"   (click)="irA('/academica')">Horarios</a>
+          <a *ngIf="esDirectivo" (click)="irA('/academica')">Crear asignaturas</a>
+          <a *ngIf="esDirectivo" (click)="irA('/academica')">Gestionar horarios</a>
+          <a *ngIf="esDirectivo" (click)="irA('/academica')">Asignar docentes</a>
         </div>
       </div>
 
-      <!-- OBSERVACIONES (docente y directivo) -->
-      <div class="menu-item" *ngIf="!esEstudiante" [class.active]="activeMenu === 'observaciones'">
-        <div class="menu-title" (click)="irA('/observaciones')" style="cursor:pointer">
+      <!-- OBSERVACIONES (todos) -->
+      <div class="menu-item" [class.active]="activeMenu === 'observaciones'">
+        <div class="menu-title" (click)="toggleMenu('observaciones')">
           <div class="title-left">
             <span class="material-icons icon">assignment</span>
-            <span>Observaciones</span>
+            <span>{{ esEstudiante ? 'Mis Observaciones' : 'Observaciones' }}</span>
           </div>
+          <span class="material-icons arrow">expand_more</span>
         </div>
-      </div>
-
-      <!-- OBSERVACIONES (estudiante: ver las suyas) -->
-      <div class="menu-item" *ngIf="esEstudiante" [class.active]="activeMenu === 'observaciones'">
-        <div class="menu-title" (click)="irA('/observaciones')" style="cursor:pointer">
-          <div class="title-left">
-            <span class="material-icons icon">assignment</span>
-            <span>Mis Observaciones</span>
-          </div>
+        <div class="submenu">
+          <a *ngIf="esEstudiante"  (click)="irA('/observaciones')">Ver mis observaciones</a>
+          <a *ngIf="esEstudiante"  (click)="irA('/observaciones')">Historial</a>
+          <a *ngIf="!esEstudiante" (click)="irA('/observaciones')">Ver observaciones</a>
+          <a *ngIf="!esEstudiante" (click)="irA('/observaciones')">Registrar observación</a>
+          <a *ngIf="esDirectivo"   (click)="irA('/observaciones')">Eliminar observaciones</a>
         </div>
       </div>
 
@@ -70,9 +88,7 @@
             <span class="material-icons icon">grading</span>
             <span>Calificaciones</span>
           </div>
-          <span class="material-icons arrow">
-            {{ activeMenu === 'calificaciones' ? 'expand_less' : 'expand_more' }}
-          </span>
+          <span class="material-icons arrow">expand_more</span>
         </div>
         <div class="submenu">
           <a *ngIf="esEstudiante">Ver mis notas</a>
@@ -89,9 +105,7 @@
             <span class="material-icons icon">chat</span>
             <span>Mensajería</span>
           </div>
-          <span class="material-icons arrow">
-            {{ activeMenu === 'mensajes' ? 'expand_less' : 'expand_more' }}
-          </span>
+          <span class="material-icons arrow">expand_more</span>
         </div>
         <div class="submenu">
           <a>Bandeja entrada</a>
@@ -107,9 +121,7 @@
             <span class="material-icons icon">calendar_month</span>
             <span>Calendario</span>
           </div>
-          <span class="material-icons arrow">
-            {{ activeMenu === 'calendario' ? 'expand_less' : 'expand_more' }}
-          </span>
+          <span class="material-icons arrow">expand_more</span>
         </div>
         <div class="submenu">
           <a>Eventos</a>
@@ -125,9 +137,7 @@
             <span class="material-icons icon">analytics</span>
             <span>Reportes</span>
           </div>
-          <span class="material-icons arrow">
-            {{ activeMenu === 'reportes' ? 'expand_less' : 'expand_more' }}
-          </span>
+          <span class="material-icons arrow">expand_more</span>
         </div>
         <div class="submenu">
           <a>Reporte académico</a>
@@ -143,9 +153,7 @@
             <span class="material-icons icon">settings</span>
             <span>Configuración</span>
           </div>
-          <span class="material-icons arrow">
-            {{ activeMenu === 'configuracion' ? 'expand_less' : 'expand_more' }}
-          </span>
+          <span class="material-icons arrow">expand_more</span>
         </div>
         <div class="submenu">
           <a>Usuarios</a>
@@ -205,8 +213,7 @@
           </ul>
         </div>
         <button (click)="irA('/estudiantes')">
-          Ver perfil
-          <span class="material-icons">arrow_forward</span>
+          Ver perfil <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 
@@ -225,8 +232,7 @@
           </ul>
         </div>
         <button (click)="irA('/estudiantes')">
-          Ingresar
-          <span class="material-icons">arrow_forward</span>
+          Ingresar <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 
@@ -247,12 +253,11 @@
           </ul>
         </div>
         <button (click)="irA('/academica')">
-          Ingresar
-          <span class="material-icons">arrow_forward</span>
+          Ingresar <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 
-      <!-- OBSERVACIONES (todos, texto cambia por rol) -->
+      <!-- OBSERVACIONES (todos) -->
       <div class="card">
         <div>
           <div class="card-icon orange">
@@ -268,8 +273,7 @@
           </ul>
         </div>
         <button (click)="irA('/observaciones')">
-          Ingresar
-          <span class="material-icons">arrow_forward</span>
+          Ingresar <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 
@@ -289,8 +293,7 @@
           </ul>
         </div>
         <button>
-          Ingresar
-          <span class="material-icons">arrow_forward</span>
+          Ingresar <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 
@@ -301,7 +304,7 @@
             <span class="material-icons">chat</span>
           </div>
           <h2>Mensajería</h2>
-          <p>Comunicación institucional entre usuarios.</p>
+          <p>Comunicación institucional entre usuarios del sistema.</p>
           <ul>
             <li>Chats internos</li>
             <li>Mensajes grupales</li>
@@ -309,8 +312,26 @@
           </ul>
         </div>
         <button>
-          Ingresar
-          <span class="material-icons">arrow_forward</span>
+          Ingresar <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- REPORTES (solo directivo) — 6ª card -->
+      <div class="card" *ngIf="esDirectivo">
+        <div>
+          <div class="card-icon purple">
+            <span class="material-icons">analytics</span>
+          </div>
+          <h2>Reportes</h2>
+          <p>Generación de reportes académicos, estadísticas y exportaciones del sistema.</p>
+          <ul>
+            <li>Reporte académico</li>
+            <li>Estadísticas generales</li>
+            <li>Exportar PDF</li>
+          </ul>
+        </div>
+        <button>
+          Ingresar <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 

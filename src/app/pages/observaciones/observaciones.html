@@ -1,0 +1,102 @@
+<div class="page-container">
+
+  <!-- TOPBAR -->
+  <div class="page-topbar">
+    <button class="btn-back" (click)="volver()">
+      <span class="material-icons">arrow_back</span>
+      Volver
+    </button>
+    <h1>{{ esEstudiante() ? 'Mis Observaciones' : 'Observaciones' }}</h1>
+    <button *ngIf="puedeCrear()" class="btn-primary" (click)="abrirForm()">
+      <span class="material-icons">add</span>
+      Nueva Observación
+    </button>
+  </div>
+
+  <!-- ALERTAS -->
+  <div class="alert-success" *ngIf="mensajeExito">{{ mensajeExito }}</div>
+  <div class="alert-error"   *ngIf="mensajeError">{{ mensajeError }}</div>
+
+  <!-- LISTA VACÍA -->
+  <div class="empty-state" *ngIf="observaciones.length === 0 && !mensajeError">
+    <span class="material-icons">assignment</span>
+    <p>No hay observaciones registradas.</p>
+  </div>
+
+  <!-- CARDS DE OBSERVACIONES -->
+  <div class="obs-grid">
+    <div class="obs-card" *ngFor="let obs of observaciones">
+      <div class="obs-header">
+        <span [class]="'badge ' + badgeClass(obs.tipo)">{{ obs.tipo }}</span>
+        <button
+          *ngIf="esDirectivo()"
+          class="btn-icon delete"
+          (click)="eliminar(obs.id)"
+          title="Eliminar">
+          <span class="material-icons">delete</span>
+        </button>
+      </div>
+
+      <h3 class="obs-title">{{ obs.titulo }}</h3>
+      <p class="obs-content">{{ obs.contenido }}</p>
+
+      <div class="obs-footer">
+        <div *ngIf="!esEstudiante()" class="obs-meta">
+          <span class="material-icons">school</span>
+          <span>{{ obs.estudianteUsername }}</span>
+        </div>
+        <div class="obs-meta">
+          <span class="material-icons">person</span>
+          <span>{{ obs.docenteUsername }}</span>
+        </div>
+        <div class="obs-meta">
+          <span class="material-icons">calendar_today</span>
+          <span>{{ obs.fechaObservacion ?? (obs.creadoEn | date:'dd/MM/yyyy') }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMULARIO (modal overlay) -->
+  <div class="modal-overlay" *ngIf="mostrarForm && puedeCrear()" (click)="cerrarForm()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Nueva Observación</h3>
+        <button class="btn-icon close-btn" (click)="cerrarForm()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Username del estudiante *</label>
+          <input [(ngModel)]="form.estudianteUsername" placeholder="username del estudiante">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo *</label>
+            <select [(ngModel)]="form.tipo">
+              <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha de observación</label>
+            <input [(ngModel)]="form.fechaObservacion" type="date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Título *</label>
+          <input [(ngModel)]="form.titulo" placeholder="Título breve de la observación">
+        </div>
+        <div class="form-group">
+          <label>Contenido *</label>
+          <textarea [(ngModel)]="form.contenido" rows="4" placeholder="Describe la observación..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cerrarForm()">Cancelar</button>
+        <button class="btn-primary"   (click)="guardar()">Registrar</button>
+      </div>
+    </div>
+  </div>
+
+</div>
