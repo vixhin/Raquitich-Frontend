@@ -1,7 +1,5 @@
-/* Reset básico — elimina márgenes y paddings por defecto del navegador */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Contenedor raíz de toda la página */
 .est-container {
   min-height: 100vh;
   background: #f0f2f5;
@@ -16,7 +14,7 @@
   background: #fff;
   padding: 16px 32px;
   border-bottom: 1px solid #e5e7eb;
-  position: sticky;   /* se queda fija arriba cuando haces scroll */
+  position: sticky;
   top: 0;
   z-index: 10;
 
@@ -28,7 +26,6 @@
     p  { font-size: 0.8rem; color: #64748b; }
   }
 
-  /* Botón con flecha para volver al home */
   .btn-back {
     width: 40px; height: 40px;
     border: 1px solid #e2e8f0;
@@ -42,7 +39,6 @@
     .material-icons { font-size: 1.2rem; }
   }
 
-  /* Avatar circular con gradiente y nombre del usuario */
   .profile-box {
     display: flex; align-items: center; gap: 10px;
     font-size: 0.9rem; color: #334155; font-weight: 500;
@@ -57,23 +53,22 @@
   }
 }
 
-/* ====== ÁREA DE CONTENIDO ====== */
+/* ====== CONTENIDO ====== */
 .content {
   padding: 28px 32px;
   max-width: 1100px;
-  margin: 0 auto;  /* centrado horizontal */
+  margin: 0 auto;
 }
 
-/* ====== BARRA DE ACCIONES (botón crear + buscador) ====== */
+/* ====== BARRA DE ACCIONES ====== */
 .actions-bar {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 20px;
-  flex-wrap: wrap;  /* en pantallas pequeñas pasa a dos líneas */
+  flex-wrap: wrap;
 }
 
-/* Input de búsqueda */
 .buscador {
   flex: 1;
   min-width: 200px;
@@ -86,7 +81,6 @@
   &:focus { outline: none; border-color: #6366f1; }
 }
 
-/* Botón azul/índigo — se usa para "Nuevo estudiante" y "Guardar" */
 .btn-primary {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 10px 20px;
@@ -100,7 +94,7 @@
   .material-icons { font-size: 1rem; }
 }
 
-/* ====== FORMULARIO DE CREAR/EDITAR ====== */
+/* ====== FORMULARIO ====== */
 .card-form {
   background: #fff;
   border-radius: 14px;
@@ -111,7 +105,6 @@
   h3 { font-size: 1rem; font-weight: 600; color: #1e293b; margin-bottom: 16px; }
 }
 
-/* Grid responsivo para los campos del formulario */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -138,21 +131,20 @@
   }
 }
 
-/* ====== TABLA DE ESTUDIANTES ====== */
+/* ====== TABLA ====== */
 .tabla-wrapper {
   background: #fff;
   border-radius: 14px;
   border: 1px solid #e2e8f0;
-  overflow: hidden;  /* el border-radius recorta la tabla */
+  overflow: hidden;
 }
 
 .tabla {
   width: 100%;
-  border-collapse: collapse;  /* elimina el espacio doble entre celdas */
+  border-collapse: collapse;
 
   thead {
     background: #f8fafc;
-
     th {
       padding: 12px 16px;
       text-align: left;
@@ -169,10 +161,9 @@
     tr {
       border-bottom: 1px solid #f1f5f9;
       transition: background .15s;
-      &:hover { background: #f8fafc; }   /* fila se ilumina al pasar el mouse */
+      &:hover { background: #f8fafc; }
       &:last-child { border-bottom: none; }
     }
-
     td {
       padding: 14px 16px;
       font-size: 0.88rem;
@@ -182,7 +173,6 @@
   }
 }
 
-/* Celda con avatar + nombre + username */
 .est-info {
   display: flex; align-items: center; gap: 10px;
 }
@@ -196,46 +186,43 @@
   flex-shrink: 0;
 }
 
-.est-nombre  { font-weight: 600; color: #1e293b; font-size: 0.9rem; }
+.est-nombre   { font-weight: 600; color: #1e293b; font-size: 0.9rem; }
 .est-username { font-size: 0.78rem; color: #94a3b8; }
 
-/* ====== BOTONES DE ACCIÓN (editar / desactivar) ====== */
+/* ====== BOTONES ACCIÓN ====== */
 .acciones {
   display: flex; gap: 15px;
 }
 
 .btn-icon {
-  width: 50px; height: 42px;
+  width: 42px; height: 42px;
   border: none; border-radius: 9px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all .2s;
-  .material-icons { font-size: 1rem; }
+  .material-icons { font-size: 1.25rem; }
 
-  /* Botón de editar — azul suave */
   &.edit {
     background: #eff6ff; color: #3b82f6;
     &:hover { background: #dbeafe; }
   }
-
-  /* Botón de desactivar — rojo suave */
   &.delete {
     background: #fef2f2; color: #ef4444;
     &:hover { background: #fee2e2; }
   }
 }
 
-/* ====== BADGES DE ESTADO ====== */
+/* ====== BADGES ====== */
 .badge {
   display: inline-flex; align-items: center;
   padding: 3px 10px; border-radius: 999px;
   font-size: 0.75rem; font-weight: 600;
 
-  &.green  { background: #f0fdf4; color: #22c55e; }  /* activo */
-  &.red    { background: #fef2f2; color: #ef4444; }  /* inactivo */
+  &.green { background: #f0fdf4; color: #22c55e; }
+  &.red   { background: #fef2f2; color: #ef4444; }
 }
 
-/* ====== VISTA DE PERFIL (solo estudiante) ====== */
+/* ====== PERFIL (estudiante) ====== */
 .perfil-card {
   background: #fff;
   border-radius: 14px;
@@ -251,11 +238,9 @@
   border-bottom: 1px solid #f1f5f9;
 
   h2 { font-size: 1.3rem; font-weight: 700; color: #1e293b; }
-
   .username { font-size: 0.9rem; color: #94a3b8; margin-bottom: 6px; }
 }
 
-/* Avatar grande para el perfil del estudiante */
 .perfil-avatar {
   width: 70px; height: 70px;
   border-radius: 50%;
@@ -265,49 +250,48 @@
   flex-shrink: 0;
 }
 
-/* Grid de 2 columnas para los datos del perfil */
 .perfil-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
 }
 
-.perfil-item {
-  display: flex; flex-direction: column; gap: 4px;
-}
+.perfil-item  { display: flex; flex-direction: column; gap: 4px; }
+.perfil-label { font-size: 0.75rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+.perfil-value { font-size: 0.95rem; color: #1e293b; font-weight: 500; }
 
-.perfil-label {
-  font-size: 0.75rem; font-weight: 600;
-  color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;
-}
-
-.perfil-value {
-  font-size: 0.95rem; color: #1e293b; font-weight: 500;
-}
-
-/* ====== ESTADOS VACÍO Y CARGANDO ====== */
+/* ====== ESTADOS ====== */
 .empty {
   text-align: center;
-  padding: 48px 0;
+  padding: 48px 24px;
   color: #94a3b8;
-  .material-icons { font-size: 3rem; display: block; margin-bottom: 8px; }
-  p { font-size: 0.9rem; }
+  .material-icons { font-size: 3rem; margin-bottom: 12px; display: block; }
+  p { font-size: 0.95rem; }
 }
 
 .loading {
-  text-align: center; color: #94a3b8;
-  padding: 40px; font-size: 0.9rem;
+  text-align: center;
+  padding: 32px;
+  color: #64748b;
+  font-size: 0.9rem;
 }
 
-/* ====== ALERTA DE ERROR ====== */
 .alert-error {
-  background: #fef2f2; border: 1px solid #fecaca;
-  color: #dc2626; padding: 10px 14px;
-  border-radius: 8px; font-size: 0.875rem; margin-bottom: 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  margin-bottom: 12px;
 }
 
 .alert-success {
-  background: #f0fdf4; border: 1px solid #bbf7d0;
-  color: #16a34a; padding: 10px 14px;
-  border-radius: 8px; font-size: 0.875rem; margin-bottom: 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  margin-bottom: 12px;
 }

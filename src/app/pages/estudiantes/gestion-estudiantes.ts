@@ -117,11 +117,11 @@ export class GestionEstudiantesComponent implements OnInit {
       };
       this.service.crear(datos).subscribe({
         next: () => {
-        this.mensajeExito = 'Estudiante creado exitosamente';
-        setTimeout(() => this.mensajeExito = '', 3000);
-        this.resetForm();
-        this.cargarLista();
-      },
+          this.mensajeExito = 'Estudiante creado exitosamente';
+          setTimeout(() => this.mensajeExito = '', 3000);
+          this.resetForm();
+          this.cargarLista();
+        },
         error: (err) => {
           if (err.status === 0) {
             this.errorForm = 'No se puede conectar al servidor. Verifica que GestionEstudiantes (8082) está iniciado.';
@@ -135,23 +135,23 @@ export class GestionEstudiantesComponent implements OnInit {
   }
 
   editar(e: Estudiante): void {
-    this.idEditando       = e.id;
-    this.modoEditar       = true;
-    this.mostrarForm      = true;
-    this.errorForm        = '';
+    this.idEditando           = e.id;
+    this.modoEditar           = true;
+    this.mostrarForm          = true;
+    this.errorForm            = '';
     this.form.nombre          = e.nombre;
     this.form.rut             = e.rut ?? '';
     this.form.fechaNacimiento = e.fechaNacimiento ?? '';
     this.form.numeroMatricula = e.numeroMatricula ?? '';
     this.form.carrera         = e.carrera ?? '';
     this.form.anioIngreso     = e.anioIngreso ?? null;
-    this.form.username = '';
-    this.form.email    = '';
-    this.form.password = '';
+    this.form.username        = '';
+    this.form.email           = '';
+    this.form.password        = '';
   }
 
   desactivar(id: number): void {
-    if (!confirm('Desactivar este estudiante?')) return;
+    if (!confirm('¿Desactivar este estudiante?')) return;
     this.service.desactivar(id).subscribe({
       next: () => this.cargarLista(),
       error: () => { this.error = 'Error al desactivar'; }

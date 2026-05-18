@@ -76,13 +76,13 @@
 
       <div class="actions-bar">
         <button class="btn-primary" *ngIf="esDirectivo()" (click)="mostrarForm = !mostrarForm">
-          <span class="material-icons"> </span>
+          <span class="material-icons">person_add</span>
           {{ mostrarForm ? 'Cancelar' : 'Nuevo estudiante' }}
         </button>
-        <input class="buscador" type="text" [(ngModel)]="textoBusqueda" placeholder="Buscar por rut, nombre o matrícula...">
+        <input class="buscador" type="text" [(ngModel)]="textoBusqueda" placeholder="Buscar por nombre, rut o matrícula...">
       </div>
 
-      <!-- FORMULARIO -->
+      <!-- FORMULARIO (solo directivo) -->
       <div class="card-form" *ngIf="mostrarForm && esDirectivo()">
         <h3>{{ modoEditar ? 'Editar estudiante' : 'Nuevo estudiante' }}</h3>
         <div class="form-grid">
@@ -125,11 +125,10 @@
         </div>
         <div class="alert-error" *ngIf="errorForm">{{ errorForm }}</div>
         <button class="btn-primary" (click)="guardar()" [disabled]="guardando">
-          <span class="material-icons"> </span>
           {{ guardando ? 'Guardando...' : (modoEditar ? 'Actualizar' : 'Crear estudiante') }}
         </button>
       </div>
-      
+
       <div class="alert-success" *ngIf="mensajeExito">{{ mensajeExito }}</div>
       <div class="alert-error" *ngIf="error">{{ error }}</div>
       <p *ngIf="cargando" class="loading">Cargando estudiantes...</p>
@@ -176,7 +175,7 @@
                     <span class="material-icons">edit</span>
                   </button>
                   <button class="btn-icon delete" (click)="desactivar(e.id)" title="Desactivar">
-                    <span class="material-icons">delete</span>
+                    <span class="material-icons">person_off</span>
                   </button>
                 </div>
               </td>
@@ -184,7 +183,7 @@
           </tbody>
         </table>
         <div class="empty" *ngIf="estudiantesFiltrados.length === 0">
-          <span class="material-icons"> </span>
+          <span class="material-icons">group_off</span>
           <p>{{ textoBusqueda ? 'Sin resultados para "' + textoBusqueda + '"' : 'No hay estudiantes registrados' }}</p>
         </div>
       </div>
