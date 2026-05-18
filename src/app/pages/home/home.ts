@@ -16,6 +16,8 @@ export class HomeComponent {
   rol: string         = '';
   inicial: string     = '';
   esEstudiante: boolean = false;
+  esDocente:    boolean = false;
+  esDirectivo:  boolean = false;
   tituloPortal: string  = '';
 
   activeMenu: string = '';
@@ -24,11 +26,16 @@ export class HomeComponent {
     private authService: AuthService,
     private router: Router
   ) {
+    const role        = this.authService.getRole();
     this.nombre       = this.authService.getNombre();
-    this.rol          = this.formatearRol(this.authService.getRole());
+    this.rol          = this.formatearRol(role);
     this.inicial      = this.nombre.charAt(0).toUpperCase();
-    this.esEstudiante = this.authService.getRole() === 'ROLE_ESTUDIANTE';
-    this.tituloPortal = this.esEstudiante ? 'Portal Estudiantil' : 'Panel Administrativo';
+    this.esEstudiante = role === 'ROLE_ESTUDIANTE';
+    this.esDocente    = role === 'ROLE_DOCENTE';
+    this.esDirectivo  = role === 'ROLE_DIRECTIVO' || role === 'ROLE_ADMIN';
+    this.tituloPortal = this.esEstudiante ? 'Portal Estudiantil'
+                      : this.esDocente    ? 'Panel Docente'
+                      : 'Panel Administrativo';
   }
 
   irA(ruta: string) {

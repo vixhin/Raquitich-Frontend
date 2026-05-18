@@ -13,228 +13,145 @@
     <!-- MENU -->
     <div class="menu">
 
-      <!-- ESTUDIANTES -->
-      <div class="menu-item" *ngIf="!esEstudiante" [class.active]="activeMenu === 'estudiantes'">
+      <!-- MI PERFIL (solo estudiante) -->
+      <div class="menu-item" *ngIf="esEstudiante" [class.active]="activeMenu === 'perfil'">
+        <div class="menu-title" (click)="irA('/estudiantes')" style="cursor:pointer">
+          <div class="title-left">
+            <span class="material-icons icon">person</span>
+            <span>Mi Perfil</span>
+          </div>
+        </div>
+      </div>
 
-        <div class="menu-title" (click)="toggleMenu('estudiantes')">
-
+      <!-- ESTUDIANTES (solo directivo) -->
+      <div class="menu-item" *ngIf="esDirectivo" [class.active]="activeMenu === 'estudiantes'">
+        <div class="menu-title" (click)="irA('/estudiantes')" style="cursor:pointer">
           <div class="title-left">
             <span class="material-icons icon">school</span>
             <span>Estudiantes</span>
           </div>
-
-          <span class="material-icons arrow">
-            {{ activeMenu === 'estudiantes' ? 'expand_less' : 'expand_more' }}
-          </span>
-
         </div>
-
-        <div class="submenu">
-          <a>Registrar estudiante</a>
-          <a>Editar ficha</a>
-          <a>Consultar estudiantes</a>
-          <a>Eliminar estudiante</a>
-          <a>Trayectoria académica</a>
-        </div>
-
       </div>
 
-      <!-- GESTION ACADEMICA -->
+      <!-- GESTION ACADEMICA (docente y directivo) -->
       <div class="menu-item" *ngIf="!esEstudiante" [class.active]="activeMenu === 'academico'">
-
-        <div class="menu-title" (click)="irA('/academica')"  style="cursor:pointer">
-
+        <div class="menu-title" (click)="irA('/academica')" style="cursor:pointer">
           <div class="title-left">
             <span class="material-icons icon">menu_book</span>
             <span>Gestión Académica</span>
           </div>
-
-          <span class="material-icons arrow">
-            {{ activeMenu === 'academico' ? 'expand_less' : 'expand_more' }}
-          </span>
-
         </div>
-
-        <div class="submenu">
-          <a>Asignaturas</a>
-          <a>Secciones</a>
-          <a>Horarios</a>
-          <a>Docentes</a>
-          <a>Matrículas</a>
-        </div>
-
       </div>
 
-      <!-- CALIFICACIONES -->
+      <!-- OBSERVACIONES (docente y directivo) -->
+      <div class="menu-item" *ngIf="!esEstudiante" [class.active]="activeMenu === 'observaciones'">
+        <div class="menu-title" (click)="irA('/observaciones')" style="cursor:pointer">
+          <div class="title-left">
+            <span class="material-icons icon">assignment</span>
+            <span>Observaciones</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OBSERVACIONES (estudiante: ver las suyas) -->
+      <div class="menu-item" *ngIf="esEstudiante" [class.active]="activeMenu === 'observaciones'">
+        <div class="menu-title" (click)="irA('/observaciones')" style="cursor:pointer">
+          <div class="title-left">
+            <span class="material-icons icon">assignment</span>
+            <span>Mis Observaciones</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CALIFICACIONES (todos) -->
       <div class="menu-item" [class.active]="activeMenu === 'calificaciones'">
-
         <div class="menu-title" (click)="toggleMenu('calificaciones')">
-
           <div class="title-left">
             <span class="material-icons icon">grading</span>
             <span>Calificaciones</span>
           </div>
-
           <span class="material-icons arrow">
             {{ activeMenu === 'calificaciones' ? 'expand_less' : 'expand_more' }}
           </span>
-
         </div>
-
         <div class="submenu">
-          <a>Ingresar notas</a>
-          <a>Editar notas</a>
-          <a>Evaluaciones</a>
+          <a *ngIf="esEstudiante">Ver mis notas</a>
+          <a *ngIf="!esEstudiante">Ingresar notas</a>
+          <a *ngIf="!esEstudiante">Editar notas</a>
           <a>Historial académico</a>
         </div>
-
       </div>
 
-      <!-- MENSAJERIA -->
+      <!-- MENSAJERÍA (todos) -->
       <div class="menu-item" [class.active]="activeMenu === 'mensajes'">
-
         <div class="menu-title" (click)="toggleMenu('mensajes')">
-
           <div class="title-left">
             <span class="material-icons icon">chat</span>
             <span>Mensajería</span>
           </div>
-
           <span class="material-icons arrow">
             {{ activeMenu === 'mensajes' ? 'expand_less' : 'expand_more' }}
           </span>
-
         </div>
-
         <div class="submenu">
           <a>Bandeja entrada</a>
           <a>Chats grupales</a>
           <a>Enviar mensaje</a>
-          <a>Notificaciones</a>
         </div>
-
       </div>
 
-      <!-- CALENDARIO -->
+      <!-- CALENDARIO (todos) -->
       <div class="menu-item" [class.active]="activeMenu === 'calendario'">
-
         <div class="menu-title" (click)="toggleMenu('calendario')">
-
           <div class="title-left">
             <span class="material-icons icon">calendar_month</span>
             <span>Calendario</span>
           </div>
-
           <span class="material-icons arrow">
             {{ activeMenu === 'calendario' ? 'expand_less' : 'expand_more' }}
           </span>
-
         </div>
-
         <div class="submenu">
           <a>Eventos</a>
           <a>Actividades</a>
           <a>Evaluaciones</a>
-          <a>Calendario académico</a>
         </div>
-
       </div>
 
-      <!-- TALLERES -->
-      <div class="menu-item" [class.active]="activeMenu === 'talleres'">
-
-        <div class="menu-title" (click)="toggleMenu('talleres')">
-
-          <div class="title-left">
-            <span class="material-icons icon">sports_soccer</span>
-            <span>Talleres</span>
-          </div>
-
-          <span class="material-icons arrow">
-            {{ activeMenu === 'talleres' ? 'expand_less' : 'expand_more' }}
-          </span>
-
-        </div>
-
-        <div class="submenu">
-          <a>Ver talleres</a>
-          <a>Inscribir estudiantes</a>
-          <a>Administrar cupos</a>
-        </div>
-
-      </div>
-
-      <!-- MURALES -->
-      <div class="menu-item" [class.active]="activeMenu === 'murales'">
-
-        <div class="menu-title" (click)="toggleMenu('murales')">
-
-          <div class="title-left">
-            <span class="material-icons icon">campaign</span>
-            <span>Murales</span>
-          </div>
-
-          <span class="material-icons arrow">
-            {{ activeMenu === 'murales' ? 'expand_less' : 'expand_more' }}
-          </span>
-
-        </div>
-
-        <div class="submenu">
-          <a>Publicar aviso</a>
-          <a>Editar comunicado</a>
-          <a>Eliminar publicación</a>
-        </div>
-
-      </div>
-
-      <!-- REPORTES -->
-      <div class="menu-item" [class.active]="activeMenu === 'reportes'">
-
+      <!-- REPORTES (solo directivo) -->
+      <div class="menu-item" *ngIf="esDirectivo" [class.active]="activeMenu === 'reportes'">
         <div class="menu-title" (click)="toggleMenu('reportes')">
-
           <div class="title-left">
             <span class="material-icons icon">analytics</span>
             <span>Reportes</span>
           </div>
-
           <span class="material-icons arrow">
             {{ activeMenu === 'reportes' ? 'expand_less' : 'expand_more' }}
           </span>
-
         </div>
-
         <div class="submenu">
           <a>Reporte académico</a>
           <a>Estadísticas</a>
           <a>Exportar PDF</a>
         </div>
-
       </div>
 
-      <!-- CONFIG -->
-      <div class="menu-item" [class.active]="activeMenu === 'configuracion'">
-
+      <!-- CONFIGURACIÓN (solo directivo) -->
+      <div class="menu-item" *ngIf="esDirectivo" [class.active]="activeMenu === 'configuracion'">
         <div class="menu-title" (click)="toggleMenu('configuracion')">
-
           <div class="title-left">
             <span class="material-icons icon">settings</span>
             <span>Configuración</span>
           </div>
-
           <span class="material-icons arrow">
             {{ activeMenu === 'configuracion' ? 'expand_less' : 'expand_more' }}
           </span>
-
         </div>
-
         <div class="submenu">
           <a>Usuarios</a>
           <a>Roles</a>
           <a>Permisos</a>
-          <a>Seguridad</a>
         </div>
-
       </div>
 
     </div>
@@ -246,190 +163,151 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-
       <div>
         <h1>{{ tituloPortal }}</h1>
         <p>Bienvenido, {{ nombre }} · {{ rol }}</p>
       </div>
-
       <div class="top-actions">
-
         <button class="icon-button">
           <span class="material-icons">notifications</span>
         </button>
-
         <button class="icon-button">
           <span class="material-icons">mail</span>
         </button>
-
         <div class="profile-box">
-
-          <div class="profile-avatar">
-            {{ inicial }}
-          </div>
-
+          <div class="profile-avatar">{{ inicial }}</div>
           <div>
             <h4>{{ nombre }}</h4>
             <span>{{ rol }}</span>
           </div>
-
         </div>
-
         <button class="icon-button" (click)="logout()" title="Cerrar sesión">
           <span class="material-icons">logout</span>
         </button>
-
       </div>
-
     </div>
 
     <!-- CARDS -->
     <div class="cards-grid">
 
-      <div class="card" *ngIf="!esEstudiante">
+      <!-- MI PERFIL (solo estudiante) -->
+      <div class="card" *ngIf="esEstudiante">
+        <div>
+          <div class="card-icon blue">
+            <span class="material-icons">person</span>
+          </div>
+          <h2>Mi Perfil</h2>
+          <p>Consulta tu información personal, carrera y datos de matrícula.</p>
+          <ul>
+            <li>Datos personales</li>
+            <li>Información académica</li>
+            <li>Estado de matrícula</li>
+          </ul>
+        </div>
+        <button (click)="irA('/estudiantes')">
+          Ver perfil
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- ESTUDIANTES (solo directivo) -->
+      <div class="card" *ngIf="esDirectivo">
         <div>
           <div class="card-icon blue">
             <span class="material-icons">school</span>
           </div>
-
           <h2>Estudiantes</h2>
-
-          <p>
-            Gestión de fichas estudiantiles, historial y trayectoria académica.
-          </p>
-
+          <p>Gestión de fichas estudiantiles, historial y trayectoria académica.</p>
           <ul>
             <li>Registro de estudiantes</li>
             <li>Consulta de información</li>
             <li>Seguimiento académico</li>
           </ul>
         </div>
-
-        <button>
+        <button (click)="irA('/estudiantes')">
           Ingresar
           <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 
+      <!-- GESTIÓN ACADÉMICA (docente y directivo) -->
       <div class="card" *ngIf="!esEstudiante">
         <div>
           <div class="card-icon green">
             <span class="material-icons">menu_book</span>
           </div>
-
           <h2>Gestión Académica</h2>
-
-          <p>
-            Administración de asignaturas, horarios, docentes y secciones.
-          </p>
-
+          <p>{{ esDocente ? 'Consulta tus secciones asignadas y horarios.' : 'Administración de asignaturas, horarios y secciones.' }}</p>
           <ul>
-            <li>Crear asignaturas</li>
-            <li>Gestionar horarios</li>
-            <li>Asignar docentes</li>
+            <li *ngIf="esDocente">Mis secciones</li>
+            <li *ngIf="esDocente">Horarios</li>
+            <li *ngIf="esDirectivo">Crear asignaturas</li>
+            <li *ngIf="esDirectivo">Gestionar horarios</li>
+            <li *ngIf="esDirectivo">Asignar docentes</li>
           </ul>
         </div>
-
         <button (click)="irA('/academica')">
           Ingresar
           <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 
+      <!-- OBSERVACIONES (todos, texto cambia por rol) -->
+      <div class="card">
+        <div>
+          <div class="card-icon orange">
+            <span class="material-icons">assignment</span>
+          </div>
+          <h2>{{ esEstudiante ? 'Mis Observaciones' : 'Observaciones' }}</h2>
+          <p>{{ esEstudiante ? 'Revisa las observaciones registradas sobre tu rendimiento.' : esDocente ? 'Registra observaciones sobre tus estudiantes.' : 'Gestiona y revisa todas las observaciones.' }}</p>
+          <ul>
+            <li *ngIf="esEstudiante">Ver mis observaciones</li>
+            <li *ngIf="!esEstudiante">Registrar observación</li>
+            <li *ngIf="esDirectivo">Eliminar observaciones</li>
+            <li>Historial de seguimiento</li>
+          </ul>
+        </div>
+        <button (click)="irA('/observaciones')">
+          Ingresar
+          <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- CALIFICACIONES (todos) -->
       <div class="card">
         <div>
           <div class="card-icon orange">
             <span class="material-icons">grading</span>
           </div>
-
           <h2>Calificaciones</h2>
-
-          <p>
-            Ingreso y administración de notas y evaluaciones.
-          </p>
-
+          <p>{{ esEstudiante ? 'Consulta tus notas y evaluaciones.' : 'Ingreso y administración de notas y evaluaciones.' }}</p>
           <ul>
-            <li>Registrar notas</li>
-            <li>Editar evaluaciones</li>
+            <li *ngIf="esEstudiante">Ver mis notas</li>
+            <li *ngIf="!esEstudiante">Registrar notas</li>
+            <li *ngIf="!esEstudiante">Editar evaluaciones</li>
             <li>Consultar historial</li>
           </ul>
         </div>
-
         <button>
           Ingresar
           <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 
+      <!-- MENSAJERÍA (todos) -->
       <div class="card">
         <div>
           <div class="card-icon blue">
             <span class="material-icons">chat</span>
           </div>
-
           <h2>Mensajería</h2>
-
-          <p>
-            Comunicación institucional entre usuarios.
-          </p>
-
+          <p>Comunicación institucional entre usuarios.</p>
           <ul>
             <li>Chats internos</li>
             <li>Mensajes grupales</li>
             <li>Notificaciones</li>
           </ul>
         </div>
-
-        <button>
-          Ingresar
-          <span class="material-icons">arrow_forward</span>
-        </button>
-      </div>
-
-      <div class="card">
-        <div>
-          <div class="card-icon green">
-            <span class="material-icons">calendar_month</span>
-          </div>
-
-          <h2>Calendario</h2>
-
-          <p>
-            Gestión de eventos y actividades universitarias.
-          </p>
-
-          <ul>
-            <li>Eventos académicos</li>
-            <li>Calendario institucional</li>
-            <li>Evaluaciones</li>
-          </ul>
-        </div>
-
-        <button>
-          Ingresar
-          <span class="material-icons">arrow_forward</span>
-        </button>
-      </div>
-
-      <div class="card">
-        <div>
-          <div class="card-icon orange">
-            <span class="material-icons">sports_soccer</span>
-          </div>
-
-          <h2>Talleres</h2>
-
-          <p>
-            Administración de talleres extracurriculares.
-          </p>
-
-          <ul>
-            <li>Inscripciones</li>
-            <li>Control de cupos</li>
-            <li>Horarios talleres</li>
-          </ul>
-        </div>
-
         <button>
           Ingresar
           <span class="material-icons">arrow_forward</span>
