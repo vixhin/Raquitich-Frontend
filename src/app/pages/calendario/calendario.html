@@ -1,0 +1,230 @@
+<div class="cal-container">
+
+  <!-- TOAST -->
+  <div *ngIf="toast" [class]="'toast toast-' + toast.tipo">
+    <span class="material-icons">{{ toast.tipo === 'success' ? 'check_circle' : 'error' }}</span>
+    {{ toast.msg }}
+  </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="btn-back" (click)="volver()">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div>
+        <h1>Calendario</h1>
+        <p>Universidad Raquitich</p>
+      </div>
+    </div>
+    <div class="profile-box">
+      <div class="profile-avatar">{{ inicial }}</div>
+      <span>{{ nombre }}</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button [class.active]="tab === 'lista'" (click)="tab = 'lista'">
+      <span class="material-icons">event</span> Eventos
+    </button>
+    <button [class.active]="tab === 'crear'" (click)="tab = 'crear'; editando = null">
+      <span class="material-icons">add_circle</span>
+      {{ editando ? 'Editar evento' : 'Nuevo evento' }}
+    </button>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══════════════════════════════════════════ TAB LISTA ═══ -->
+    <div *ngIf="tab === 'lista'">
+
+      <!-- Spinner -->
+      <div *ngIf="cargando" class="spinner-box">
+        <span class="material-icons spinning">autorenew</span>
+        <p>Cargando eventos...</p>
+      </div>
+
+      <!-- Eventos Institucionales -->
+      <div *ngIf="!cargando">
+        <div class="section-header">
+          <h2>Eventos Institucionales</h2>
+          <p>Eventos publicados por la dirección académica</p>
+        </div>
+
+        <div class="eventos-grid" *ngIf="eventosInstitucionales.length > 0">
+          <div class="evento-card institucional" *ngFor="let e of eventosInstitucionales" [style.borderLeftColor]="e.color">
+            <div class="evento-top">
+              <span class="badge-tipo" [class.institucional]="e.tipo==='INSTITUCIONAL'" [class.publico]="e.tipo==='PUBLICO'">
+                {{ e.tipo === 'INSTITUCIONAL' ? 'Institucional' : 'Sección' }}
+              </span>
+              <div class="evento-acciones" *ngIf="puedeEditar(e)">
+                <button class="icon-btn" (click)="editar(e)" title="Editar">
+                  <span class="material-icons">edit</span>
+                </button>
+                <button class="icon-btn danger" (click)="eliminar(e.id)" title="Eliminar">
+                  <span class="material-icons">delete</span>
+                </button>
+              </div>
+            </div>
+            <h3 class="evento-titulo">{{ e.titulo }}</h3>
+            <p class="evento-desc" *ngIf="e.descripcion">{{ e.descripcion }}</p>
+            <div class="evento-meta">
+              <span><span class="material-icons">calendar_today</span> {{ formatFecha(e.fechaInicio) }}<span *ngIf="e.fechaFin && e.fechaFin !== e.fechaInicio"> → {{ formatFecha(e.fechaFin) }}</span></span>
+              <span *ngIf="e.horaInicio"><span class="material-icons">schedule</span> {{ e.horaInicio }}<span *ngIf="e.horaFin"> – {{ e.horaFin }}</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-box" *ngIf="eventosInstitucionales.length === 0">
+          <span class="material-icons">event_busy</span>
+          <p>No hay eventos institucionales publicados</p>
+        </div>
+
+        <!-- Eventos Personales -->
+        <div style="margin-top: 32px">
+          <div class="section-header">
+            <h2>Mis Eventos Personales</h2>
+            <p>Tus recordatorios de pruebas, evaluaciones y actividades</p>
+          </div>
+
+          <div class="eventos-grid" *ngIf="eventosPersonales.length > 0">
+            <div class="evento-card personal" *ngFor="let e of eventosPersonales" [style.borderLeftColor]="e.color">
+              <div class="evento-top">
+                <span class="badge-tipo personal">Personal</span>
+                <div class="evento-acciones">
+                  <button class="icon-btn" (click)="editar(e)" title="Editar">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="icon-btn danger" (click)="eliminar(e.id)" title="Eliminar">
+                    <span class="material-icons">delete</span>
+                  </button>
+                </div>
+              </div>
+              <h3 class="evento-titulo">{{ e.titulo }}</h3>
+              <p class="evento-desc" *ngIf="e.descripcion">{{ e.descripcion }}</p>
+              <div class="evento-meta">
+                <span><span class="material-icons">calendar_today</span> {{ formatFecha(e.fechaInicio) }}<span *ngIf="e.fechaFin && e.fechaFin !== e.fechaInicio"> → {{ formatFecha(e.fechaFin) }}</span></span>
+                <span *ngIf="e.horaInicio"><span class="material-icons">schedule</span> {{ e.horaInicio }}<span *ngIf="e.horaFin"> – {{ e.horaFin }}</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-box" *ngIf="eventosPersonales.length === 0">
+            <span class="material-icons">note_add</span>
+            <p>No tienes eventos personales</p>
+            <small>Crea uno para recordar pruebas o evaluaciones</small>
+            <button class="btn-primary" style="margin-top:12px" (click)="tab = 'crear'">
+              <span class="material-icons">add</span> Crear evento
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ TAB CREAR ═══ -->
+    <div *ngIf="tab === 'crear'">
+
+      <div class="section-header">
+        <h2>{{ editando ? 'Editar evento' : 'Nuevo evento' }}</h2>
+        <p>{{ esDirectivo ? 'Puedes crear eventos institucionales visibles para todos o personales' : 'Crea un recordatorio personal para tus pruebas y evaluaciones' }}</p>
+      </div>
+
+      <div class="card-form">
+
+        <!-- Tipo de evento según rol -->
+        <div class="form-group" *ngIf="!editando">
+          <label>Tipo de evento *</label>
+          <div class="radio-group">
+
+            <!-- DIRECTIVO: institucional o personal -->
+            <ng-container *ngIf="esDirectivo">
+              <label class="radio-label">
+                <input type="radio" [(ngModel)]="form.tipoEvento" value="institucional">
+                <span class="material-icons">account_balance</span>
+                <div><strong>Institucional</strong><small>Visible para todos</small></div>
+              </label>
+              <label class="radio-label">
+                <input type="radio" [(ngModel)]="form.tipoEvento" value="personal">
+                <span class="material-icons">person</span>
+                <div><strong>Personal</strong><small>Solo para ti</small></div>
+              </label>
+            </ng-container>
+
+            <!-- DOCENTE: para mi sección (público) o personal -->
+            <ng-container *ngIf="esDocente">
+              <label class="radio-label">
+                <input type="radio" [(ngModel)]="form.tipoEvento" value="publico">
+                <span class="material-icons">campaign</span>
+                <div><strong>Para mi sección</strong><small>Visible para todos los alumnos</small></div>
+              </label>
+              <label class="radio-label">
+                <input type="radio" [(ngModel)]="form.tipoEvento" value="personal">
+                <span class="material-icons">person</span>
+                <div><strong>Personal</strong><small>Solo para ti</small></div>
+              </label>
+            </ng-container>
+
+            <!-- ESTUDIANTE: solo personal -->
+            <ng-container *ngIf="esEstudiante">
+              <label class="radio-label" style="pointer-events:none; opacity:0.7">
+                <input type="radio" [(ngModel)]="form.tipoEvento" value="personal" checked>
+                <span class="material-icons">note_add</span>
+                <div><strong>Recordatorio personal</strong><small>Solo visible para ti</small></div>
+              </label>
+            </ng-container>
+
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Título *</label>
+            <input type="text" [(ngModel)]="form.titulo" placeholder="Ej: Prueba Matemáticas I">
+          </div>
+          <div class="form-group full">
+            <label>Descripción</label>
+            <input type="text" [(ngModel)]="form.descripcion" placeholder="Detalle opcional del evento">
+          </div>
+          <div class="form-group">
+            <label>Fecha inicio *</label>
+            <input type="date" [(ngModel)]="form.fechaInicio">
+          </div>
+          <div class="form-group">
+            <label>Fecha fin</label>
+            <input type="date" [(ngModel)]="form.fechaFin">
+          </div>
+          <div class="form-group">
+            <label>Hora inicio</label>
+            <input type="time" [(ngModel)]="form.horaInicio">
+          </div>
+          <div class="form-group">
+            <label>Hora fin</label>
+            <input type="time" [(ngModel)]="form.horaFin">
+          </div>
+          <div class="form-group">
+            <label>Color</label>
+            <div class="color-picker">
+              <button *ngFor="let c of colores"
+                class="color-btn"
+                [style.background]="c.value"
+                [class.selected]="form.color === c.value"
+                (click)="form.color = c.value"
+                [title]="c.label">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-primary" (click)="guardar()">
+            <span class="material-icons">{{ editando ? 'save' : 'add' }}</span>
+            {{ editando ? 'Guardar cambios' : 'Crear evento' }}
+          </button>
+          <button class="btn-secondary" (click)="resetForm()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
