@@ -53,8 +53,11 @@ export class AuthService {
   }
 
   getNombre(): string {
-    const v = localStorage.getItem('nombre');
-    return (v && v !== 'undefined' && v !== 'null') ? v : 'Usuario';
+    const nombre = localStorage.getItem('nombre');
+    if (nombre && nombre !== 'undefined' && nombre !== 'null') return nombre;
+    // fallback al username si el nombre no llegó del backend
+    const username = localStorage.getItem('username');
+    return (username && username !== 'undefined' && username !== 'null') ? username : 'Usuario';
   }
 
   getRole(): string {

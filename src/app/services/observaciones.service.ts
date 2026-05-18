@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { timeout } from 'rxjs/operators';
 import { AuthService } from './auth';
 
 export interface Observacion {
@@ -36,18 +37,18 @@ export class ObservacionesService {
   }
 
   listarTodas(): Observable<Observacion[]> {
-    return this.http.get<Observacion[]>(`${this.api}/observaciones`, { headers: this.headers() });
+    return this.http.get<Observacion[]>(`${this.api}/observaciones`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   misObservaciones(): Observable<Observacion[]> {
-    return this.http.get<Observacion[]>(`${this.api}/observaciones/mis-observaciones`, { headers: this.headers() });
+    return this.http.get<Observacion[]>(`${this.api}/observaciones/mis-observaciones`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   registrar(data: ObservacionRequest): Observable<Observacion> {
-    return this.http.post<Observacion>(`${this.api}/observaciones`, data, { headers: this.headers() });
+    return this.http.post<Observacion>(`${this.api}/observaciones`, data, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   eliminar(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/observaciones/${id}`, { headers: this.headers() });
+    return this.http.delete<void>(`${this.api}/observaciones/${id}`, { headers: this.headers() }).pipe(timeout(10000));
   }
 }

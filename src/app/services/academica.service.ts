@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { timeout } from 'rxjs/operators';
+import { AuthService } from './auth';
 
 export interface Asignatura {
   id: number;
@@ -45,61 +47,65 @@ export class AcademicaService {
 
   private api = 'http://localhost:8083';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
+
+  private headers(): HttpHeaders {
+    return new HttpHeaders({ Authorization: `Bearer ${this.auth.getToken()}` });
+  }
 
   // ── Asignaturas ────────────────────────────────────────────────────────────
   getAsignaturas(): Observable<Asignatura[]> {
-    return this.http.get<Asignatura[]>(`${this.api}/asignaturas`);
+    return this.http.get<Asignatura[]>(`${this.api}/asignaturas`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   crearAsignatura(data: Partial<Asignatura>): Observable<Asignatura> {
-    return this.http.post<Asignatura>(`${this.api}/asignaturas`, data);
+    return this.http.post<Asignatura>(`${this.api}/asignaturas`, data, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   actualizarAsignatura(id: number, data: Partial<Asignatura>): Observable<Asignatura> {
-    return this.http.put<Asignatura>(`${this.api}/asignaturas/${id}`, data);
+    return this.http.put<Asignatura>(`${this.api}/asignaturas/${id}`, data, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   eliminarAsignatura(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/asignaturas/${id}`);
+    return this.http.delete<void>(`${this.api}/asignaturas/${id}`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   // ── Secciones ──────────────────────────────────────────────────────────────
   getSecciones(): Observable<Seccion[]> {
-    return this.http.get<Seccion[]>(`${this.api}/secciones`);
+    return this.http.get<Seccion[]>(`${this.api}/secciones`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   crearSeccion(data: any): Observable<Seccion> {
-    return this.http.post<Seccion>(`${this.api}/secciones`, data);
+    return this.http.post<Seccion>(`${this.api}/secciones`, data, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   actualizarSeccion(id: number, data: any): Observable<Seccion> {
-    return this.http.put<Seccion>(`${this.api}/secciones/${id}`, data);
+    return this.http.put<Seccion>(`${this.api}/secciones/${id}`, data, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   eliminarSeccion(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/secciones/${id}`);
+    return this.http.delete<void>(`${this.api}/secciones/${id}`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   // ── Horarios ───────────────────────────────────────────────────────────────
   agregarHorario(seccionId: number, data: any): Observable<HorarioResponse> {
-    return this.http.post<HorarioResponse>(`${this.api}/secciones/${seccionId}/horarios`, data);
+    return this.http.post<HorarioResponse>(`${this.api}/secciones/${seccionId}/horarios`, data, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   eliminarHorario(seccionId: number, horarioId: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/secciones/${seccionId}/horarios/${horarioId}`);
+    return this.http.delete<void>(`${this.api}/secciones/${seccionId}/horarios/${horarioId}`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   // ── Inscripciones ──────────────────────────────────────────────────────────
   getInscritos(seccionId: number): Observable<Inscripcion[]> {
-    return this.http.get<Inscripcion[]>(`${this.api}/secciones/${seccionId}/inscripciones`);
+    return this.http.get<Inscripcion[]>(`${this.api}/secciones/${seccionId}/inscripciones`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   inscribir(seccionId: number, estudianteUsername: string): Observable<Inscripcion> {
-    return this.http.post<Inscripcion>(`${this.api}/secciones/${seccionId}/inscripciones`, { estudianteUsername });
+    return this.http.post<Inscripcion>(`${this.api}/secciones/${seccionId}/inscripciones`, { estudianteUsername }, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   eliminarInscripcion(seccionId: number, inscripcionId: number): Observable<void> {
-    return this.http.delete<void>(`${this.api}/secciones/${seccionId}/inscripciones/${inscripcionId}`);
+    return this.http.delete<void>(`${this.api}/secciones/${seccionId}/inscripciones/${inscripcionId}`, { headers: this.headers() }).pipe(timeout(10000));
   }
 }

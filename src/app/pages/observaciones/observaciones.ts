@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { ObservacionesService, Observacion, ObservacionRequest } from '../../services/observaciones.service';
+import { timeout } from 'rxjs/operators';
 
 @Component({
   selector: 'app-observaciones',
@@ -14,10 +15,16 @@ import { ObservacionesService, Observacion, ObservacionRequest } from '../../ser
 })
 export class ObservacionesComponent implements OnInit {
 
+  tab: 'lista' | 'nueva' = 'lista';
+
+  nombre: string = '';
+  inicial: string = '';
   observaciones: Observacion[] = [];
-  mostrarForm = false;
-  mensajeExito = '';
-  mensajeError  = '';
+  cargando = false;
+
+  // Toast flotante
+  toast: { msg: string; tipo: 'success' | 'error' } | null = null;
+  private toastTimer: any;
 
   form: ObservacionRequest = {
     estudianteUsername: '',
@@ -40,21 +47,35 @@ export class ObservacionesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.nombre  = this.auth.getNombre();
+    this.inicial = this.nombre.charAt(0).toUpperCase();
     this.cargar();
   }
 
+  // ── Toast ─────────────────────────────────────────────────────────────────
+  mostrarToast(msg: string, tipo: 'success' | 'error'): void {
+    clearTimeout(this.toastTimer);
+    this.toast = { msg, tipo };
+    this.toastTimer = setTimeout(() => this.toast = null, 4000);
+  }
+
+  extractError(err: any): string {
+    return err?.error?.message
+        || err?.error?.error
+        || err?.message
+        || (err?.name === 'TimeoutError' ? 'El servidor no respondió. Verifica que los servicios estén activos.' : null)
+        || 'Ocurrió un error inesperado.';
+  }
+
   cargar(): void {
-    if (this.esEstudiante()) {
-      this.service.misObservaciones().subscribe({
-        next: data => this.observaciones = data,
-        error: () => this.mensajeError = 'No se pudieron cargar tus observaciones.'
-      });
-    } else {
-      this.service.listarTodas().subscribe({
-        next: data => this.observaciones = data,
-        error: () => this.mensajeError = 'Error al cargar las observaciones.'
-      });
-    }
+    const obs$ = this.esEstudiante()
+      ? this.service.misObservaciones()
+      : this.service.listarTodas();
+
+    obs$.subscribe({
+      next:  data => this.observaciones = data,
+      error: err  => this.mostrarToast(this.extractError(err), 'error')
+    });
   }
 
   esEstudiante(): boolean { return this.rol === 'ROLE_ESTUDIANTE'; }
@@ -62,62 +83,52 @@ export class ObservacionesComponent implements OnInit {
   esDirectivo():  boolean { return this.rol === 'ROLE_DIRECTIVO' || this.rol === 'ROLE_ADMIN'; }
   puedeCrear():   boolean { return this.esDocente() || this.esDirectivo(); }
 
-  abrirForm(): void {
-    this.resetForm();
-    this.mostrarForm = true;
-  }
-
-  cerrarForm(): void {
-    this.mostrarForm = false;
-    this.resetForm();
-  }
-
   guardar(): void {
-    this.mensajeExito = '';
-    this.mensajeError  = '';
+    if (!this.form.estudianteUsername.trim()) { this.mostrarToast('El username del estudiante es obligatorio.', 'error'); return; }
+    if (!this.form.titulo.trim())             { this.mostrarToast('El título es obligatorio.', 'error'); return; }
+    if (!this.form.contenido.trim())          { this.mostrarToast('El contenido es obligatorio.', 'error'); return; }
 
-    const payload: ObservacionRequest = {
-      estudianteUsername: this.form.estudianteUsername,
-      tipo:               this.form.tipo,
-      titulo:             this.form.titulo,
-      contenido:          this.form.contenido,
-      fechaObservacion:   this.form.fechaObservacion || undefined
-    };
+    this.cargando = true;
 
-    this.service.registrar(payload).subscribe({
+    this.service.registrar({
+      ...this.form,
+      fechaObservacion: this.form.fechaObservacion || undefined
+    }).subscribe({
       next: () => {
-        this.mensajeExito = 'Observación registrada correctamente.';
-        this.cerrarForm();
+        this.cargando = false;
+        this.mostrarToast('✓ Observación registrada correctamente.', 'success');
+        this.resetForm();
+        this.tab = 'lista';
         this.cargar();
       },
-      error: () => this.mensajeError = 'Error al registrar la observación.'
+      error: (err) => {
+        this.cargando = false;
+        this.mostrarToast(this.extractError(err), 'error');
+      }
     });
   }
 
   eliminar(id: number): void {
-    if (!confirm('¿Eliminar esta observación?')) return;
+    if (!confirm('¿Eliminar esta observación? Esta acción no se puede deshacer.')) return;
     this.service.eliminar(id).subscribe({
-      next: () => {
-        this.mensajeExito = 'Observación eliminada.';
-        this.cargar();
-      },
-      error: () => this.mensajeError = 'Error al eliminar.'
+      next:  () => { this.mostrarToast('Observación eliminada.', 'success'); this.cargar(); },
+      error: err => this.mostrarToast(this.extractError(err), 'error')
     });
-  }
-
-  volver(): void {
-    this.router.navigate(['/home']);
   }
 
   badgeClass(tipo: string): string {
     const map: Record<string, string> = {
-      ACADEMICA:   'badge-blue',
-      CONDUCTUAL:  'badge-red',
-      POSITIVA:    'badge-green',
-      SEGUIMIENTO: 'badge-orange',
-      GENERAL:     'badge-gray'
+      ACADEMICA:   'blue',
+      CONDUCTUAL:  'red',
+      POSITIVA:    'green',
+      SEGUIMIENTO: 'orange',
+      GENERAL:     'gray'
     };
-    return map[tipo] ?? 'badge-gray';
+    return map[tipo] ?? 'gray';
+  }
+
+  volver(): void {
+    this.router.navigate(['/home']);
   }
 
   private resetForm(): void {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { timeout } from 'rxjs/operators';
 import { AuthService } from './auth';
 
 export interface Estudiante {
@@ -31,26 +32,26 @@ export class GestionEstudiantesService {
   }
 
   listar(): Observable<Estudiante[]> {
-    return this.http.get<Estudiante[]>(`${this.api}/estudiantes`, { headers: this.headers() });
+    return this.http.get<Estudiante[]>(`${this.api}/estudiantes`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   miPerfil(): Observable<Estudiante> {
-    return this.http.get<Estudiante>(`${this.api}/estudiantes/mi-perfil`, { headers: this.headers() });
+    return this.http.get<Estudiante>(`${this.api}/estudiantes/mi-perfil`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   obtener(id: number): Observable<Estudiante> {
-    return this.http.get<Estudiante>(`${this.api}/estudiantes/${id}`, { headers: this.headers() });
+    return this.http.get<Estudiante>(`${this.api}/estudiantes/${id}`, { headers: this.headers() }).pipe(timeout(10000));
   }
 
-  crear(data: Partial<Estudiante>): Observable<Estudiante> {
-    return this.http.post<Estudiante>(`${this.api}/estudiantes`, data, { headers: this.headers() });
+  crear(data: any): Observable<Estudiante> {
+    return this.http.post<Estudiante>(`${this.api}/estudiantes`, data, { headers: this.headers() }).pipe(timeout(12000));
   }
 
-  actualizar(id: number, data: Partial<Estudiante>): Observable<Estudiante> {
-    return this.http.put<Estudiante>(`${this.api}/estudiantes/${id}`, data, { headers: this.headers() });
+  actualizar(id: number, data: any): Observable<Estudiante> {
+    return this.http.put<Estudiante>(`${this.api}/estudiantes/${id}`, data, { headers: this.headers() }).pipe(timeout(10000));
   }
 
   desactivar(id: number): Observable<Estudiante> {
-    return this.http.delete<Estudiante>(`${this.api}/estudiantes/${id}`, { headers: this.headers() });
+    return this.http.delete<Estudiante>(`${this.api}/estudiantes/${id}`, { headers: this.headers() }).pipe(timeout(10000));
   }
 }

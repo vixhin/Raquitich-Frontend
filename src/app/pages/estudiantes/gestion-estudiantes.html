@@ -1,200 +1,338 @@
-<div class="page-container">
+<div class="est-container">
 
-  <!-- TOPBAR -->
-  <div class="page-topbar">
-    <button class="btn-back" (click)="volver()">
-      <span class="material-icons">arrow_back</span>
-      Volver
-    </button>
-    <h1>{{ esEstudiante() ? 'Mi Perfil' : 'Estudiantes' }}</h1>
-    <button *ngIf="esDirectivo()" class="btn-primary" (click)="abrirForm()">
-      <span class="material-icons">person_add</span>
-      Nuevo Estudiante
-    </button>
+  <!-- TOAST FLOTANTE -->
+  <div *ngIf="toast" [class]="'toast toast-' + toast.tipo">
+    <span class="material-icons">{{ toast.tipo === 'success' ? 'check_circle' : 'error' }}</span>
+    {{ toast.msg }}
   </div>
 
-  <!-- ALERTAS -->
-  <div class="alert-success" *ngIf="mensajeExito">{{ mensajeExito }}</div>
-  <div class="alert-error"   *ngIf="mensajeError">{{ mensajeError }}</div>
-
-  <!-- VISTA ESTUDIANTE: MI PERFIL -->
-  <div class="perfil-card" *ngIf="esEstudiante() && perfil">
-    <div class="perfil-avatar">{{ perfil.nombre.charAt(0) }}</div>
-    <div class="perfil-info">
-      <h2>{{ perfil.nombre }}</h2>
-      <p class="perfil-username">@{{ perfil.username }}</p>
-      <div class="perfil-grid">
-        <div class="perfil-field">
-          <span class="label">RUT</span>
-          <span>{{ perfil.rut ?? '—' }}</span>
-        </div>
-        <div class="perfil-field">
-          <span class="label">Email</span>
-          <span>{{ perfil.email }}</span>
-        </div>
-        <div class="perfil-field">
-          <span class="label">Carrera</span>
-          <span>{{ perfil.carrera ?? '—' }}</span>
-        </div>
-        <div class="perfil-field">
-          <span class="label">N° Matrícula</span>
-          <span>{{ perfil.numeroMatricula ?? '—' }}</span>
-        </div>
-        <div class="perfil-field">
-          <span class="label">Año de ingreso</span>
-          <span>{{ perfil.anioIngreso ?? '—' }}</span>
-        </div>
-        <div class="perfil-field">
-          <span class="label">Fecha de nacimiento</span>
-          <span>{{ perfil.fechaNacimiento ?? '—' }}</span>
-        </div>
-        <div class="perfil-field">
-          <span class="label">Estado</span>
-          <span [class]="perfil.activo ? 'badge-activo' : 'badge-inactivo'">
-            {{ perfil.activo ? 'Activo' : 'Inactivo' }}
-          </span>
-        </div>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="btn-back" (click)="volver()">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div>
+        <h1>{{ esEstudiante() ? 'Mi Perfil' : 'Gestión de Personas' }}</h1>
+        <p>Universidad Raquitich</p>
       </div>
+    </div>
+    <div class="profile-box">
+      <div class="profile-avatar">{{ inicial }}</div>
+      <span>{{ nombre }}</span>
     </div>
   </div>
 
-  <!-- VISTA DOCENTE: TABLA SOLO LECTURA -->
-  <div class="table-wrapper" *ngIf="esDocente()">
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Username</th>
-          <th>RUT</th>
-          <th>Email</th>
-          <th>Carrera</th>
-          <th>Matrícula</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let e of estudiantes">
-          <td>{{ e.nombre }}</td>
-          <td>{{ e.username }}</td>
-          <td>{{ e.rut ?? '—' }}</td>
-          <td>{{ e.email }}</td>
-          <td>{{ e.carrera ?? '—' }}</td>
-          <td>{{ e.numeroMatricula ?? '—' }}</td>
-          <td>
-            <span [class]="e.activo ? 'badge-activo' : 'badge-inactivo'">
-              {{ e.activo ? 'Activo' : 'Inactivo' }}
-            </span>
-          </td>
-        </tr>
-        <tr *ngIf="estudiantes.length === 0">
-          <td colspan="7" class="empty-row">No hay estudiantes registrados.</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- TABS -->
+  <div class="tabs" *ngIf="!esEstudiante()">
+
+    <!-- Estudiantes -->
+    <button [class.active]="tab === 'estudiantes' || tab === 'agregar-estudiante'"
+            (click)="tab = 'estudiantes'; cargarEstudiantes()">
+      <span class="material-icons">school</span>
+      Estudiantes
+    </button>
+
+    <!-- Docentes y Directivos -->
+    <button *ngIf="esDirectivo()"
+            [class.active]="tab === 'personal' || tab === 'agregar-personal'"
+            (click)="irAPersonal()">
+      <span class="material-icons">badge</span>
+      Docentes y Directivos
+    </button>
+
   </div>
 
-  <!-- VISTA DIRECTIVO: TABLA CON ACCIONES -->
-  <div class="table-wrapper" *ngIf="esDirectivo()">
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Username</th>
-          <th>RUT</th>
-          <th>Email</th>
-          <th>Carrera</th>
-          <th>Matrícula</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let e of estudiantes">
-          <td>{{ e.nombre }}</td>
-          <td>{{ e.username }}</td>
-          <td>{{ e.rut ?? '—' }}</td>
-          <td>{{ e.email }}</td>
-          <td>{{ e.carrera ?? '—' }}</td>
-          <td>{{ e.numeroMatricula ?? '—' }}</td>
-          <td>
-            <span [class]="e.activo ? 'badge-activo' : 'badge-inactivo'">
-              {{ e.activo ? 'Activo' : 'Inactivo' }}
-            </span>
-          </td>
-          <td class="acciones">
-            <button class="btn-icon edit"   (click)="editar(e)"        title="Editar">
-              <span class="material-icons">edit</span>
-            </button>
-            <button class="btn-icon delete" (click)="desactivar(e.id)" title="Desactivar">
-              <span class="material-icons">person_off</span>
-            </button>
-          </td>
-        </tr>
-        <tr *ngIf="estudiantes.length === 0">
-          <td colspan="8" class="empty-row">No hay estudiantes registrados.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <!-- CONTENT -->
+  <div class="content">
 
-  <!-- FORMULARIO (modal overlay) -->
-  <div class="modal-overlay" *ngIf="mostrarForm && esDirectivo()" (click)="cerrarForm()">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>{{ editandoId ? 'Editar Estudiante' : 'Nuevo Estudiante' }}</h3>
-        <button class="btn-icon" (click)="cerrarForm()">
-          <span class="material-icons">close</span>
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <!--  MI PERFIL (estudiante)                                           -->
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <div *ngIf="esEstudiante() && perfil">
+      <div class="section-header">
+        <h2>Mi información académica</h2>
+        <p>Datos registrados en el sistema</p>
+      </div>
+      <div class="perfil-card">
+        <div class="perfil-avatar-lg">{{ perfil.nombre.charAt(0) }}</div>
+        <div class="perfil-data">
+          <h2>{{ perfil.nombre }}</h2>
+          <p class="sub">@{{ perfil.username }}</p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>RUT</label>
+              <div class="readonly-val">{{ perfil.rut ?? '—' }}</div>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <div class="readonly-val">{{ perfil.email }}</div>
+            </div>
+            <div class="form-group">
+              <label>Carrera</label>
+              <div class="readonly-val">{{ perfil.carrera ?? '—' }}</div>
+            </div>
+            <div class="form-group">
+              <label>N° Matrícula</label>
+              <div class="readonly-val">{{ perfil.numeroMatricula ?? '—' }}</div>
+            </div>
+            <div class="form-group">
+              <label>Año de ingreso</label>
+              <div class="readonly-val">{{ perfil.anioIngreso ?? '—' }}</div>
+            </div>
+            <div class="form-group">
+              <label>Fecha de nacimiento</label>
+              <div class="readonly-val">{{ perfil.fechaNacimiento ?? '—' }}</div>
+            </div>
+            <div class="form-group">
+              <label>Estado</label>
+              <div class="readonly-val">
+                <span [class]="'badge ' + (perfil.activo ? 'green' : 'red')">
+                  {{ perfil.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <!--  LISTA ESTUDIANTES                                                -->
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <div *ngIf="!esEstudiante() && tab === 'estudiantes'">
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <div>
+          <h2>Estudiantes</h2>
+          <p>{{ esDirectivo() ? 'Administra los estudiantes registrados' : 'Consulta la información de los estudiantes' }}</p>
+        </div>
+        <button *ngIf="esDirectivo()" class="btn-primary"
+                (click)="tab = 'agregar-estudiante'; editandoId = null">
+          <span class="material-icons">person_add</span>
+          Nuevo Estudiante
         </button>
       </div>
-      <div class="modal-body">
-        <div class="form-row">
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Username</th>
+              <th>RUT</th>
+              <th>Email</th>
+              <th>Carrera</th>
+              <th>Matrícula</th>
+              <th>Estado</th>
+              <th *ngIf="esDirectivo()">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of estudiantes">
+              <td>{{ e.nombre }}</td>
+              <td>{{ e.username }}</td>
+              <td>{{ e.rut ?? '—' }}</td>
+              <td>{{ e.email }}</td>
+              <td>{{ e.carrera ?? '—' }}</td>
+              <td>{{ e.numeroMatricula ?? '—' }}</td>
+              <td><span [class]="'badge ' + (e.activo ? 'green' : 'red')">{{ e.activo ? 'Activo' : 'Inactivo' }}</span></td>
+              <td *ngIf="esDirectivo()">
+                <button class="icon-btn" (click)="editarEstudiante(e)" title="Editar">
+                  <span class="material-icons">edit</span>
+                </button>
+                <button class="icon-btn danger" (click)="desactivarEstudiante(e.id)" title="Desactivar">
+                  <span class="material-icons">person_off</span>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="estudiantes.length === 0">
+              <td [attr.colspan]="esDirectivo() ? 8 : 7" class="empty">No hay estudiantes registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <!--  FORMULARIO ESTUDIANTE (crear / editar)                           -->
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <div *ngIf="esDirectivo() && tab === 'agregar-estudiante'">
+      <div class="section-header">
+        <h2>{{ editandoId ? 'Editar estudiante' : 'Nuevo estudiante' }}</h2>
+        <p>{{ editandoId ? 'Modifica los datos del estudiante seleccionado' : 'Completa el formulario para registrar un nuevo estudiante' }}</p>
+      </div>
+      <div class="card-form">
+        <div class="form-grid">
           <div class="form-group">
             <label>Nombre completo *</label>
-            <input [(ngModel)]="form.nombre" placeholder="Nombre completo">
+            <input [(ngModel)]="formEstudiante.nombre" placeholder="Ej: María González">
           </div>
           <div class="form-group">
             <label>Username *</label>
-            <input [(ngModel)]="form.username" placeholder="username" [disabled]="editandoId !== null">
+            <input [(ngModel)]="formEstudiante.username" placeholder="magonzalez" [disabled]="editandoId !== null">
           </div>
-        </div>
-        <div class="form-row">
+          <div class="form-group" *ngIf="!editandoId">
+            <label>Contraseña inicial *</label>
+            <input [(ngModel)]="formEstudiante.password" type="password" placeholder="Mínimo 8 caracteres">
+          </div>
           <div class="form-group">
             <label>RUT</label>
-            <input [(ngModel)]="form.rut" placeholder="12.345.678-9">
+            <input [(ngModel)]="formEstudiante.rut" placeholder="12.345.678-9">
           </div>
           <div class="form-group">
             <label>Email *</label>
-            <input [(ngModel)]="form.email" placeholder="correo@ejemplo.com" type="email">
+            <input [(ngModel)]="formEstudiante.email" placeholder="correo@ejemplo.com" type="email">
           </div>
-        </div>
-        <div class="form-row">
           <div class="form-group">
             <label>Carrera</label>
-            <input [(ngModel)]="form.carrera" placeholder="Ingeniería Civil">
+            <input [(ngModel)]="formEstudiante.carrera" placeholder="Ingeniería Civil">
           </div>
           <div class="form-group">
             <label>N° Matrícula</label>
-            <input [(ngModel)]="form.numeroMatricula" placeholder="2024001">
+            <input [(ngModel)]="formEstudiante.numeroMatricula" placeholder="2024001">
           </div>
-        </div>
-        <div class="form-row">
           <div class="form-group">
             <label>Año de ingreso</label>
-            <input [(ngModel)]="form.anioIngreso" type="number" placeholder="2024">
+            <input [(ngModel)]="formEstudiante.anioIngreso" type="number" placeholder="2024">
           </div>
           <div class="form-group">
             <label>Fecha de nacimiento</label>
-            <input [(ngModel)]="form.fechaNacimiento" type="date">
+            <input [(ngModel)]="formEstudiante.fechaNacimiento" type="date">
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="cerrarForm()">Cancelar</button>
-        <button class="btn-primary"   (click)="guardar()">
-          {{ editandoId ? 'Guardar cambios' : 'Crear estudiante' }}
-        </button>
+        <div class="form-actions">
+          <button class="btn-primary" (click)="guardarEstudiante()" [disabled]="cargando">
+            <span class="material-icons">{{ editandoId ? 'save' : 'add' }}</span>
+            {{ editandoId ? 'Guardar cambios' : 'Crear estudiante' }}
+          </button>
+          <button class="btn-secondary" (click)="tab = 'estudiantes'; editandoId = null">Cancelar</button>
+        </div>
       </div>
     </div>
-  </div>
 
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <!--  LISTA PERSONAL (docentes y directivos)                           -->
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <div *ngIf="esDirectivo() && tab === 'personal'">
+      <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <div>
+          <h2>Docentes y Directivos</h2>
+          <p>Administra el personal académico registrado en el sistema</p>
+        </div>
+        <button class="btn-primary" (click)="tab = 'agregar-personal'">
+          <span class="material-icons">person_add</span>
+          Nuevo Docente / Directivo
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Cambiar Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of personal">
+              <td>{{ u.nombre }}</td>
+              <td>{{ u.username }}</td>
+              <td>{{ u.email }}</td>
+              <td><span [class]="'badge ' + roleBadge(u.role)">{{ rolesLabel[u.role] ?? u.role }}</span></td>
+              <td><span [class]="'badge ' + (u.enabled ? 'green' : 'red')">{{ u.enabled ? 'Activo' : 'Inactivo' }}</span></td>
+              <td>
+                <!-- Inline: selector de rol -->
+                <div *ngIf="cambioRolId === u.id" style="display:flex; gap:6px; align-items:center;">
+                  <select [(ngModel)]="cambioRolVal"
+                          style="padding:5px 8px; border:1px solid #e2e8f0; border-radius:6px; font-size:0.85rem;">
+                    <option *ngFor="let r of rolesPersonal" [value]="r.value">{{ r.label }}</option>
+                  </select>
+                  <button class="icon-btn" (click)="confirmarCambioRol()" title="Confirmar">
+                    <span class="material-icons">check</span>
+                  </button>
+                  <button class="icon-btn" (click)="cambioRolId = null" title="Cancelar">
+                    <span class="material-icons">close</span>
+                  </button>
+                </div>
+                <button *ngIf="cambioRolId !== u.id" class="icon-btn" (click)="iniciarCambioRol(u)" title="Cambiar rol">
+                  <span class="material-icons">swap_horiz</span>
+                </button>
+              </td>
+              <td>
+                <button class="icon-btn" [class.danger]="u.enabled" (click)="toggleEstadoPersonal(u)"
+                        [title]="u.enabled ? 'Desactivar' : 'Activar'">
+                  <span class="material-icons">{{ u.enabled ? 'person_off' : 'person' }}</span>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="personal.length === 0">
+              <td colspan="7" class="empty">No hay docentes ni directivos registrados.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <!--  FORMULARIO PERSONAL (igual que estudiante + rol)                 -->
+    <!-- ══════════════════════════════════════════════════════════════════ -->
+    <div *ngIf="esDirectivo() && tab === 'agregar-personal'">
+      <div class="section-header">
+        <h2>Nuevo Docente o Directivo</h2>
+        <p>Completa el formulario para registrar un nuevo miembro del personal académico</p>
+      </div>
+      <div class="card-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre completo *</label>
+            <input [(ngModel)]="formPersonal.nombre" placeholder="Ej: Carlos Pérez">
+          </div>
+          <div class="form-group">
+            <label>Username *</label>
+            <input [(ngModel)]="formPersonal.username" placeholder="cperez">
+          </div>
+          <div class="form-group">
+            <label>RUT</label>
+            <input [(ngModel)]="formPersonal.rut" placeholder="12.345.678-9">
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input [(ngModel)]="formPersonal.email" placeholder="cperez@raquitich.cl" type="email">
+          </div>
+          <div class="form-group">
+            <label>Contraseña inicial *</label>
+            <input [(ngModel)]="formPersonal.password" placeholder="Mínimo 8 caracteres" type="password">
+          </div>
+          <!-- ← único campo extra respecto al formulario de estudiante -->
+          <div class="form-group">
+            <label>Rol *</label>
+            <select [(ngModel)]="formPersonal.rol">
+              <option *ngFor="let r of rolesPersonal" [value]="r.value">{{ r.label }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha de nacimiento</label>
+            <input [(ngModel)]="formPersonal.fechaNacimiento" type="date">
+          </div>
+          <div class="form-group">
+            <label>Departamento / Carrera</label>
+            <input [(ngModel)]="formPersonal.carrera" placeholder="Ej: Matemáticas">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" (click)="guardarPersonal()" [disabled]="cargando">
+            <span class="material-icons">add</span>
+            {{ cargando ? 'Creando...' : 'Crear ' + rolesLabel[formPersonal.rol] }}
+          </button>
+          <button class="btn-secondary" (click)="irAPersonal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>

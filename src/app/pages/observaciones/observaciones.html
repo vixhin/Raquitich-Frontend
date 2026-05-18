@@ -1,77 +1,103 @@
-<div class="page-container">
+<div class="obs-container">
+
+  <!-- TOAST FLOTANTE -->
+  <div *ngIf="toast" [class]="'toast toast-' + toast.tipo">
+    <span class="material-icons">{{ toast.tipo === 'success' ? 'check_circle' : 'error' }}</span>
+    {{ toast.msg }}
+  </div>
 
   <!-- TOPBAR -->
-  <div class="page-topbar">
-    <button class="btn-back" (click)="volver()">
-      <span class="material-icons">arrow_back</span>
-      Volver
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="btn-back" (click)="volver()">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div>
+        <h1>{{ esEstudiante() ? 'Mis Observaciones' : 'Observaciones' }}</h1>
+        <p>Universidad Raquitich</p>
+      </div>
+    </div>
+    <div class="profile-box">
+      <div class="profile-avatar">{{ inicial }}</div>
+      <span>{{ nombre }}</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button [class.active]="tab === 'lista'" (click)="tab = 'lista'">
+      <span class="material-icons">assignment</span>
+      {{ esEstudiante() ? 'Mis Observaciones' : 'Todas las Observaciones' }}
     </button>
-    <h1>{{ esEstudiante() ? 'Mis Observaciones' : 'Observaciones' }}</h1>
-    <button *ngIf="puedeCrear()" class="btn-primary" (click)="abrirForm()">
-      <span class="material-icons">add</span>
+    <button *ngIf="puedeCrear()" [class.active]="tab === 'nueva'" (click)="tab = 'nueva'">
+      <span class="material-icons">add_circle</span>
       Nueva Observación
     </button>
   </div>
 
-  <!-- ALERTAS -->
-  <div class="alert-success" *ngIf="mensajeExito">{{ mensajeExito }}</div>
-  <div class="alert-error"   *ngIf="mensajeError">{{ mensajeError }}</div>
+  <!-- CONTENT -->
+  <div class="content">
 
-  <!-- LISTA VACÍA -->
-  <div class="empty-state" *ngIf="observaciones.length === 0 && !mensajeError">
-    <span class="material-icons">assignment</span>
-    <p>No hay observaciones registradas.</p>
-  </div>
-
-  <!-- CARDS DE OBSERVACIONES -->
-  <div class="obs-grid">
-    <div class="obs-card" *ngFor="let obs of observaciones">
-      <div class="obs-header">
-        <span [class]="'badge ' + badgeClass(obs.tipo)">{{ obs.tipo }}</span>
-        <button
-          *ngIf="esDirectivo()"
-          class="btn-icon delete"
-          (click)="eliminar(obs.id)"
-          title="Eliminar">
-          <span class="material-icons">delete</span>
-        </button>
+    <!-- ── TAB LISTA ──────────────────────────────────────────────────────── -->
+    <div *ngIf="tab === 'lista'">
+      <div class="section-header">
+        <h2>{{ esEstudiante() ? 'Observaciones sobre mí' : 'Historial de observaciones' }}</h2>
+        <p>{{ esEstudiante() ? 'Observaciones registradas sobre tu desempeño académico' : 'Todas las observaciones registradas en el sistema' }}</p>
       </div>
 
-      <h3 class="obs-title">{{ obs.titulo }}</h3>
-      <p class="obs-content">{{ obs.contenido }}</p>
+      <!-- vacío -->
+      <div class="empty-state" *ngIf="observaciones.length === 0">
+        <span class="material-icons">assignment_late</span>
+        <p>No hay observaciones registradas.</p>
+      </div>
 
-      <div class="obs-footer">
-        <div *ngIf="!esEstudiante()" class="obs-meta">
-          <span class="material-icons">school</span>
-          <span>{{ obs.estudianteUsername }}</span>
-        </div>
-        <div class="obs-meta">
-          <span class="material-icons">person</span>
-          <span>{{ obs.docenteUsername }}</span>
-        </div>
-        <div class="obs-meta">
-          <span class="material-icons">calendar_today</span>
-          <span>{{ obs.fechaObservacion ?? (obs.creadoEn | date:'dd/MM/yyyy') }}</span>
-        </div>
+      <!-- tabla -->
+      <div class="table-wrapper" *ngIf="observaciones.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Título</th>
+              <th>Contenido</th>
+              <th *ngIf="!esEstudiante()">Estudiante</th>
+              <th>Docente</th>
+              <th>Fecha</th>
+              <th *ngIf="esDirectivo()">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let obs of observaciones">
+              <td>
+                <span [class]="'badge ' + badgeClass(obs.tipo)">{{ obs.tipo }}</span>
+              </td>
+              <td><strong>{{ obs.titulo }}</strong></td>
+              <td class="col-contenido">{{ obs.contenido }}</td>
+              <td *ngIf="!esEstudiante()">{{ obs.estudianteUsername }}</td>
+              <td>{{ obs.docenteUsername }}</td>
+              <td>{{ obs.fechaObservacion ?? (obs.creadoEn | date:'dd/MM/yyyy') }}</td>
+              <td *ngIf="esDirectivo()">
+                <button class="icon-btn danger" (click)="eliminar(obs.id)" title="Eliminar">
+                  <span class="material-icons">delete</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
 
-  <!-- FORMULARIO (modal overlay) -->
-  <div class="modal-overlay" *ngIf="mostrarForm && puedeCrear()" (click)="cerrarForm()">
-    <div class="modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3>Nueva Observación</h3>
-        <button class="btn-icon close-btn" (click)="cerrarForm()">
-          <span class="material-icons">close</span>
-        </button>
+    <!-- ── TAB NUEVA OBSERVACIÓN ─────────────────────────────────────────── -->
+    <div *ngIf="puedeCrear() && tab === 'nueva'">
+      <div class="section-header">
+        <h2>Registrar observación</h2>
+        <p>Completa el formulario para registrar una nueva observación sobre un estudiante</p>
       </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>Username del estudiante *</label>
-          <input [(ngModel)]="form.estudianteUsername" placeholder="username del estudiante">
-        </div>
-        <div class="form-row">
+      <div class="card-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Username del estudiante *</label>
+            <input [(ngModel)]="form.estudianteUsername" placeholder="username del estudiante">
+          </div>
           <div class="form-group">
             <label>Tipo *</label>
             <select [(ngModel)]="form.tipo">
@@ -82,21 +108,27 @@
             <label>Fecha de observación</label>
             <input [(ngModel)]="form.fechaObservacion" type="date">
           </div>
+          <div class="form-group full">
+            <label>Título *</label>
+            <input [(ngModel)]="form.titulo" placeholder="Título breve de la observación">
+          </div>
+          <div class="form-group full">
+            <label>Contenido *</label>
+            <textarea [(ngModel)]="form.contenido" rows="5" placeholder="Describe la observación de forma detallada..."></textarea>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Título *</label>
-          <input [(ngModel)]="form.titulo" placeholder="Título breve de la observación">
+
+        <div class="form-actions">
+          <button class="btn-primary" (click)="guardar()" [disabled]="cargando">
+            <span class="material-icons">save</span>
+            {{ cargando ? 'Guardando...' : 'Registrar observación' }}
+          </button>
+          <button class="btn-secondary" (click)="tab = 'lista'">
+            Cancelar
+          </button>
         </div>
-        <div class="form-group">
-          <label>Contenido *</label>
-          <textarea [(ngModel)]="form.contenido" rows="4" placeholder="Describe la observación..."></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="cerrarForm()">Cancelar</button>
-        <button class="btn-primary"   (click)="guardar()">Registrar</button>
       </div>
     </div>
-  </div>
 
+  </div>
 </div>

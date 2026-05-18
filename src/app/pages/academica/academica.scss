@@ -8,6 +8,34 @@
   font-family: 'Inter', sans-serif;
 }
 
+// ── TOAST ──────────────────────────────────────────────────────────────────
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  animation: slideIn .25s ease;
+  max-width: 420px;
+
+  .material-icons { font-size: 1.2rem; }
+
+  &.toast-success { background: #166534; color: #fff; }
+  &.toast-error   { background: #991b1b; color: #fff; }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
 // ── TOPBAR ─────────────────────────────────────────────────────────────────
 .topbar {
   display: flex;
@@ -349,4 +377,17 @@
   border-radius: 8px;
   font-size: 0.875rem;
   margin-bottom: 12px;
+}
+
+// ── FIELD HINT ─────────────────────────────────────────────────────────────
+.field-hint {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.sala {
+  color: #64748b;
+  font-size: 0.85rem;
 }
