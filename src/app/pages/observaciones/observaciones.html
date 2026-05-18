@@ -1,0 +1,106 @@
+<div class="obs-container">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="btn-back" (click)="volver()">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div>
+        <h1>Observaciones y Seguimiento</h1>
+        <p>{{ esEstudiante() ? 'Mis observaciones registradas' : esDocente() ? 'Registro de observaciones' : 'Gestión de observaciones' }}</p>
+      </div>
+    </div>
+    <div class="profile-box">
+      <div class="avatar">{{ inicial }}</div>
+      <span>{{ nombre }}</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- BARRA DE ACCIONES: docente y directivo pueden crear -->
+    <div class="actions-bar" *ngIf="puedeCrear()">
+      <button class="btn-primary" (click)="mostrarForm = !mostrarForm">
+        <span class="material-icons">{{ mostrarForm ? 'close' : 'add' }}</span>
+        {{ mostrarForm ? 'Cancelar' : 'Nueva observación' }}
+      </button>
+    </div>
+
+    <!-- FORMULARIO (docente y directivo) -->
+    <div class="card-form" *ngIf="mostrarForm && puedeCrear()">
+      <h3>Nueva observación</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Username del estudiante</label>
+          <input type="text" [(ngModel)]="form.estudianteUsername" placeholder="ej: juan.perez">
+        </div>
+        <div class="form-group">
+          <label>Tipo</label>
+          <select [(ngModel)]="form.tipo">
+            <option *ngFor="let t of tipos" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Título</label>
+          <input type="text" [(ngModel)]="form.titulo" placeholder="Título breve">
+        </div>
+        <div class="form-group">
+          <label>Fecha (opcional)</label>
+          <input type="date" [(ngModel)]="form.fechaObservacion">
+        </div>
+        <div class="form-group full">
+          <label>Contenido</label>
+          <textarea [(ngModel)]="form.contenido" rows="4" placeholder="Descripción detallada..."></textarea>
+        </div>
+      </div>
+      <div class="alert-error" *ngIf="errorForm">{{ errorForm }}</div>
+      <button class="btn-primary" (click)="guardar()" [disabled]="guardando">
+        {{ guardando ? 'Guardando...' : 'Registrar observación' }}
+      </button>
+    </div>
+
+    <div class="alert-error" *ngIf="error">{{ error }}</div>
+    <p *ngIf="cargando" class="loading">Cargando observaciones...</p>
+
+    <!-- LISTA DE OBSERVACIONES -->
+    <div *ngIf="!cargando">
+
+      <div *ngIf="observaciones.length === 0" class="empty">
+        <span class="material-icons">speaker_notes_off</span>
+        <p>No hay observaciones registradas</p>
+      </div>
+
+      <div class="obs-list">
+        <div class="obs-card" *ngFor="let o of observaciones">
+          <div class="obs-header">
+            <div class="obs-meta">
+              <span class="badge tipo" [ngClass]="colorTipo(o.tipo)">{{ o.tipo }}</span>
+              <span class="obs-titulo">{{ o.titulo }}</span>
+            </div>
+            <div class="obs-actions">
+              <span class="obs-fecha">{{ o.creadoEn | date:'dd/MM/yyyy' }}</span>
+              <!-- Solo directivo puede eliminar -->
+              <button class="btn-icon delete" *ngIf="esDirectivo()" (click)="eliminar(o.id)" title="Eliminar">
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
+          </div>
+          <p class="obs-contenido">{{ o.contenido }}</p>
+          <div class="obs-footer">
+            <span class="obs-info">
+              <span class="material-icons">person</span>
+              Estudiante: <strong>{{ o.estudianteUsername }}</strong>
+            </span>
+            <span class="obs-info" *ngIf="!esEstudiante()">
+              <span class="material-icons">school</span>
+              Docente: <strong>{{ o.docenteUsername }}</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
