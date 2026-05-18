@@ -1,0 +1,433 @@
+<div class="dashboard-container">
+
+  <!-- ══════════════════════════════════════════════════════════ SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="logo-section">
+      <img src="logo-raquitich.png" class="logo">
+      <h2>Raquitich</h2>
+      <span>Universidad Digital</span>
+    </div>
+
+    <div class="menu">
+
+      <!-- ESTUDIANTES -->
+      <div class="menu-item" *ngIf="!esEstudiante" [class.active]="activeMenu === 'estudiantes'">
+        <div class="menu-title" (click)="toggleMenu('estudiantes')">
+          <div class="title-left">
+            <span class="material-icons icon">school</span>
+            <span>Estudiantes</span>
+          </div>
+          <span class="material-icons arrow">{{ activeMenu === 'estudiantes' ? 'expand_less' : 'expand_more' }}</span>
+        </div>
+        <div class="submenu">
+          <a (click)="irAlHome()">Registrar estudiante</a>
+          <a (click)="irAlHome()">Editar ficha</a>
+          <a (click)="irAlHome()">Consultar estudiantes</a>
+        </div>
+      </div>
+
+      <!-- GESTIÓN ACADÉMICA -->
+      <div class="menu-item" *ngIf="!esEstudiante" [class.active]="activeMenu === 'academico'">
+        <div class="menu-title" (click)="toggleMenu('academico')">
+          <div class="title-left">
+            <span class="material-icons icon">menu_book</span>
+            <span>Gestión Académica</span>
+          </div>
+          <span class="material-icons arrow">{{ activeMenu === 'academico' ? 'expand_less' : 'expand_more' }}</span>
+        </div>
+        <div class="submenu">
+          <a (click)="irAlHome()">Asignaturas</a>
+          <a (click)="irAlHome()">Secciones</a>
+          <a (click)="irAlHome()">Horarios</a>
+        </div>
+      </div>
+
+      <!-- CALIFICACIONES -->
+      <div class="menu-item" [class.active]="activeMenu === 'calificaciones'">
+        <div class="menu-title" (click)="toggleMenu('calificaciones')">
+          <div class="title-left">
+            <span class="material-icons icon">grading</span>
+            <span>Calificaciones</span>
+          </div>
+          <span class="material-icons arrow">{{ activeMenu === 'calificaciones' ? 'expand_less' : 'expand_more' }}</span>
+        </div>
+        <div class="submenu">
+          <a (click)="irAlHome()">Ingresar notas</a>
+          <a (click)="irAlHome()">Historial académico</a>
+        </div>
+      </div>
+
+      <!-- TALLERES (activo) -->
+      <div class="menu-item" [class.active]="activeMenu === 'talleres'">
+        <div class="menu-title" (click)="toggleMenu('talleres')">
+          <div class="title-left">
+            <span class="material-icons icon">sports_soccer</span>
+            <span>Talleres</span>
+          </div>
+          <span class="material-icons arrow">{{ activeMenu === 'talleres' ? 'expand_less' : 'expand_more' }}</span>
+        </div>
+        <div class="submenu">
+          <a class="active-link">Ver talleres</a>
+          <a *ngIf="esEstudiante">Mis inscripciones</a>
+          <a *ngIf="!esEstudiante" (click)="abrirNuevo()">Nuevo taller</a>
+        </div>
+      </div>
+
+      <!-- CALENDARIO -->
+      <div class="menu-item" [class.active]="activeMenu === 'calendario'">
+        <div class="menu-title" (click)="toggleMenu('calendario')">
+          <div class="title-left">
+            <span class="material-icons icon">calendar_month</span>
+            <span>Calendario</span>
+          </div>
+          <span class="material-icons arrow">{{ activeMenu === 'calendario' ? 'expand_less' : 'expand_more' }}</span>
+        </div>
+        <div class="submenu">
+          <a (click)="irAlHome()">Eventos</a>
+          <a (click)="irAlHome()">Actividades</a>
+        </div>
+      </div>
+
+      <!-- VOLVER AL INICIO -->
+      <div class="menu-item menu-volver" (click)="irAlHome()">
+        <div class="title-left">
+          <span class="material-icons icon">arrow_back</span>
+          <span>Volver al inicio</span>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════════ MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+        <h1>{{ tituloPortal }}</h1>
+        <p>Bienvenido, {{ nombre }} · {{ rol }}</p>
+      </div>
+      <div class="top-actions">
+        <button class="icon-button">
+          <span class="material-icons">notifications</span>
+        </button>
+        <div class="profile-box">
+          <div class="profile-avatar">{{ inicial }}</div>
+          <div>
+            <h4>{{ nombre }}</h4>
+            <span>{{ rol }}</span>
+          </div>
+        </div>
+        <button class="icon-button" (click)="logout()" title="Cerrar sesión">
+          <span class="material-icons">logout</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TOASTS -->
+    <div class="toast toast-exito" *ngIf="exito">
+      <span class="material-icons">check_circle</span>
+      {{ exito }}
+    </div>
+    <div class="toast toast-error" *ngIf="error">
+      <span class="material-icons">error</span>
+      {{ error }}
+    </div>
+
+    <!-- CABECERA DE SECCIÓN -->
+    <div class="seccion-header">
+      <div class="seccion-titulo">
+        <div class="seccion-icon">
+          <span class="material-icons">sports_soccer</span>
+        </div>
+        <div>
+          <h2>Talleres Extracurriculares</h2>
+          <p *ngIf="esEstudiante">Explora los talleres disponibles e inscríbete</p>
+          <p *ngIf="!esEstudiante">Administra los talleres y controla los cupos</p>
+        </div>
+      </div>
+      <button class="btn-primary" *ngIf="!esEstudiante" (click)="abrirNuevo()">
+        <span class="material-icons">add</span>
+        Nuevo Taller
+      </button>
+    </div>
+
+    <!-- CARGANDO -->
+    <div class="estado-carga" *ngIf="cargando">
+      <span class="material-icons spin">autorenew</span>
+      <p>Cargando talleres...</p>
+    </div>
+
+    <!-- SIN TALLERES -->
+    <div class="estado-vacio" *ngIf="!cargando && talleres.length === 0 && !error">
+      <span class="material-icons">sports_soccer</span>
+      <p>No hay talleres disponibles aún.</p>
+      <button class="btn-primary" *ngIf="!esEstudiante" (click)="abrirNuevo()">
+        Crear el primer taller
+      </button>
+    </div>
+
+    <!-- ══════════════════ VISTA ESTUDIANTE: tarjetas -->
+    <div class="talleres-grid" *ngIf="esEstudiante && !cargando && talleres.length > 0">
+
+      <div class="taller-card" *ngFor="let t of talleres" [class.sin-cupos]="t.cuposTaller === 0">
+
+        <div class="taller-card-header">
+          <div class="taller-icon">
+            <span class="material-icons">sports_soccer</span>
+          </div>
+          <span class="cupos-badge" [class.disponible]="t.cuposTaller > 0" [class.lleno]="t.cuposTaller === 0">
+            {{ t.cuposTaller > 0 ? t.cuposTaller + ' cupos' : 'Sin cupos' }}
+          </span>
+        </div>
+
+        <div class="taller-card-body">
+          <h3>{{ t.nombreTaller }}</h3>
+          <p>{{ t.descripcionTaller || 'Sin descripción disponible.' }}</p>
+        </div>
+
+        <div class="taller-card-footer">
+          <div class="cupos-info" *ngIf="t.cuposTaller > 0">
+            <span class="material-icons">people</span>
+            <span>{{ t.cuposTaller }} lugar{{ t.cuposTaller !== 1 ? 'es' : '' }} disponible{{ t.cuposTaller !== 1 ? 's' : '' }}</span>
+          </div>
+          <div class="cupos-info lleno" *ngIf="t.cuposTaller === 0">
+            <span class="material-icons">block</span>
+            <span>Taller completo</span>
+          </div>
+          <button class="btn-inscribir" [disabled]="t.cuposTaller === 0" (click)="inscribirse(t)">
+            <span class="material-icons">{{ t.cuposTaller > 0 ? 'how_to_reg' : 'lock' }}</span>
+            {{ t.cuposTaller > 0 ? 'Inscribirme' : 'Sin cupos' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════ VISTA ADMIN / DOCENTE: tabla -->
+    <div class="tabla-container" *ngIf="!esEstudiante && !cargando && talleres.length > 0">
+      <table class="tabla-talleres">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre del Taller</th>
+            <th>Descripción</th>
+            <th>Cupos Disponibles</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of talleres; let i = index">
+            <td class="td-id">{{ t.idTaller }}</td>
+            <td class="td-nombre">
+              <div class="nombre-cell">
+                <div class="mini-icon">
+                  <span class="material-icons">sports_soccer</span>
+                </div>
+                {{ t.nombreTaller }}
+              </div>
+            </td>
+            <td class="td-desc">{{ t.descripcionTaller || '—' }}</td>
+            <td class="td-cupos">
+              <span class="cupos-num" [class.cero]="t.cuposTaller === 0">
+                {{ t.cuposTaller }}
+              </span>
+            </td>
+            <td>
+              <span class="estado-badge" [class.activo]="t.cuposTaller > 0" [class.lleno]="t.cuposTaller === 0">
+                {{ t.cuposTaller > 0 ? 'Disponible' : 'Completo' }}
+              </span>
+            </td>
+            <td class="td-acciones">
+              <button class="btn-accion ver" (click)="verDetalle(t)" title="Ver detalle">
+                <span class="material-icons">visibility</span>
+              </button>
+              <button class="btn-accion editar" (click)="abrirEdicion(t)" title="Editar">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="btn-accion eliminar" (click)="pedirConfirmacion(t)" title="Eliminar">
+                <span class="material-icons">delete</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════ MODAL: CREAR / EDITAR -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>
+        <span class="material-icons">{{ modoEdicion ? 'edit' : 'add_circle' }}</span>
+        {{ modoEdicion ? 'Editar Taller' : 'Nuevo Taller' }}
+      </h3>
+      <button class="btn-cerrar" (click)="cerrarModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="campo">
+        <label>Nombre del Taller *</label>
+        <input
+          type="text"
+          [(ngModel)]="formulario.nombreTaller"
+          placeholder="Ej: Taller de Robótica"
+          maxlength="100">
+      </div>
+
+      <div class="campo">
+        <label>Descripción</label>
+        <textarea
+          [(ngModel)]="formulario.descripcionTaller"
+          placeholder="Descripción del taller (opcional)"
+          rows="3"
+          maxlength="300">
+        </textarea>
+      </div>
+
+      <div class="campo">
+        <label>Cupos Disponibles *</label>
+        <input
+          type="number"
+          [(ngModel)]="formulario.cuposTaller"
+          min="0"
+          max="500"
+          placeholder="0">
+        <small>Número máximo de estudiantes que pueden inscribirse.</small>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancelar" (click)="cerrarModal()" [disabled]="guardando">
+        Cancelar
+      </button>
+      <button
+        class="btn-guardar"
+        (click)="guardar()"
+        [disabled]="!formulario.nombreTaller.trim() || formulario.cuposTaller < 0 || guardando">
+        <span class="material-icons">{{ guardando ? 'autorenew' : 'save' }}</span>
+        {{ guardando ? 'Guardando...' : (modoEdicion ? 'Actualizar' : 'Crear Taller') }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ MODAL: CONFIRMAR ELIMINAR -->
+<div class="modal-overlay" *ngIf="mostrarConfirmar" (click)="cerrarConfirmar()">
+  <div class="modal modal-sm" (click)="$event.stopPropagation()">
+
+    <div class="modal-header danger">
+      <h3>
+        <span class="material-icons">warning</span>
+        Eliminar Taller
+      </h3>
+      <button class="btn-cerrar" (click)="cerrarConfirmar()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="confirm-msg">
+        ¿Estás seguro de que deseas eliminar el taller
+        <strong>"{{ tallerAEliminar?.nombreTaller }}"</strong>?
+        Esta acción no se puede deshacer.
+      </p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancelar" (click)="cerrarConfirmar()" [disabled]="eliminando">
+        Cancelar
+      </button>
+      <button class="btn-eliminar" (click)="confirmarEliminar()" [disabled]="eliminando">
+        <span class="material-icons">{{ eliminando ? 'autorenew' : 'delete' }}</span>
+        {{ eliminando ? 'Eliminando...' : 'Sí, eliminar' }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ MODAL: DETALLE TALLER (admin) -->
+<div class="modal-overlay" *ngIf="mostrarDetalle" (click)="cerrarDetalle()">
+  <div class="modal modal-detalle" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>
+        <span class="material-icons">info</span>
+        Detalle del Taller
+      </h3>
+      <button class="btn-cerrar" (click)="cerrarDetalle()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="tallerDetalle">
+
+      <div class="detalle-hero">
+        <div class="detalle-icon">
+          <span class="material-icons">sports_soccer</span>
+        </div>
+        <div>
+          <h2>{{ tallerDetalle.nombreTaller }}</h2>
+          <p>{{ tallerDetalle.descripcionTaller || 'Sin descripción.' }}</p>
+        </div>
+      </div>
+
+      <div class="detalle-metricas">
+        <div class="metrica">
+          <span class="material-icons">event_seat</span>
+          <div>
+            <strong>{{ tallerDetalle.cuposTaller }}</strong>
+            <span>Cupos disponibles</span>
+          </div>
+        </div>
+        <div class="metrica" [class.metrica-llena]="tallerDetalle.cuposTaller === 0">
+          <span class="material-icons">{{ tallerDetalle.cuposTaller > 0 ? 'check_circle' : 'cancel' }}</span>
+          <div>
+            <strong>{{ tallerDetalle.cuposTaller > 0 ? 'Disponible' : 'Completo' }}</strong>
+            <span>Estado del taller</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detalle-alumnos">
+        <div class="alumnos-header">
+          <span class="material-icons">group</span>
+          <h4>Alumnos Inscritos</h4>
+        </div>
+        <div class="alumnos-info">
+          <p>
+            El sistema registra los cupos disponibles en tiempo real. Cada inscripción
+            reduce los cupos en 1.
+          </p>
+          <div class="alumnos-stat">
+            <span class="material-icons">how_to_reg</span>
+            <span>Inscripciones activas: <strong>se calculan por reducción de cupos</strong></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancelar" (click)="cerrarDetalle()">Cerrar</button>
+      <button class="btn-guardar" (click)="abrirEdicion(tallerDetalle!); cerrarDetalle()">
+        <span class="material-icons">edit</span>
+        Editar Taller
+      </button>
+    </div>
+
+  </div>
+</div>
