@@ -108,4 +108,12 @@ export class AcademicaService {
   eliminarInscripcion(seccionId: number, inscripcionId: number): Observable<void> {
     return this.http.delete<void>(`${this.api}/secciones/${seccionId}/inscripciones/${inscripcionId}`, { headers: this.headers() }).pipe(timeout(10000));
   }
+
+  misSeccionesDocente(): Observable<Seccion[]> {
+    return this.http.get<Seccion[]>(`${this.api}/secciones/mis-secciones-docente`, { headers: this.headers() }).pipe(timeout(10000));
+  }
+
+  misSeccionesEstudiante(): Observable<Seccion[]> {
+    return this.http.get<Seccion[]>(`${this.api}/secciones/mis-secciones`, { headers: this.headers() }).pipe(timeout(10000));
+  }
 }

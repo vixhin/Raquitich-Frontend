@@ -114,19 +114,35 @@
         </div>
       </div>
 
+      <!-- TALLERES (todos) -->
+      <div class="menu-item" [class.active]="activeMenu === 'talleres'">
+        <div class="menu-title" (click)="toggleMenu('talleres')">
+          <div class="title-left">
+            <span class="material-icons icon">sports_esports</span>
+            <span>Talleres</span>
+          </div>
+          <span class="material-icons arrow">expand_more</span>
+        </div>
+        <div class="submenu">
+          <a (click)="irA('/talleres')">Ver talleres</a>
+          <a *ngIf="esEstudiante" (click)="irA('/talleres')">Inscribirse</a>
+          <a *ngIf="esDirectivo" (click)="irA('/talleres')">Crear taller</a>
+        </div>
+      </div>
+
       <!-- CALENDARIO (todos) -->
       <div class="menu-item" [class.active]="activeMenu === 'calendario'">
         <div class="menu-title" (click)="toggleMenu('calendario')">
           <div class="title-left">
             <span class="material-icons icon">calendar_month</span>
-            <span>Calendario</span>
+            <span>{{ esEstudiante ? 'Mi Calendario' : 'Calendario' }}</span>
           </div>
           <span class="material-icons arrow">expand_more</span>
         </div>
         <div class="submenu">
-          <a>Eventos</a>
-          <a>Actividades</a>
-          <a>Evaluaciones</a>
+          <a (click)="irA('/calendario')">Ver eventos</a>
+          <a *ngIf="!esEstudiante" (click)="irA('/calendario')">Crear evento</a>
+          <a *ngIf="esDirectivo" (click)="irA('/calendario')">Publicar evaluaciones</a>
         </div>
       </div>
 
@@ -316,7 +332,52 @@
         </button>
       </div>
 
-      <!-- REPORTES (solo directivo) — 6ª card -->
+      <!-- TALLERES EXTRACURRICULARES (todos) -->
+      <div class="card">
+        <div>
+          <div class="card-icon teal">
+            <span class="material-icons">sports_esports</span>
+          </div>
+          <h2>Talleres Extracurriculares</h2>
+          <p>{{ esEstudiante ? 'Explora e inscríbete en talleres disponibles.' : esDocente ? 'Consulta los talleres activos.' : 'Gestiona y crea talleres extracurriculares.' }}</p>
+          <ul>
+            <li *ngIf="esEstudiante">Ver talleres disponibles</li>
+            <li *ngIf="esEstudiante">Inscribirse en talleres</li>
+            <li *ngIf="!esEstudiante">Ver talleres activos</li>
+            <li *ngIf="esDirectivo">Crear talleres</li>
+            <li *ngIf="esDirectivo">Gestionar cupos</li>
+          </ul>
+        </div>
+        <button (click)="irA('/talleres')">
+          Ingresar <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- CALENDARIO Y EVENTOS (todos, contenido según rol) -->
+      <div class="card">
+        <div>
+          <div class="card-icon indigo">
+            <span class="material-icons">calendar_month</span>
+          </div>
+          <h2>{{ esEstudiante ? 'Mi Calendario' : 'Calendario y Eventos' }}</h2>
+          <p>{{ esEstudiante ? 'Revisa tus próximas pruebas, actividades y eventos institucionales.' : esDocente ? 'Consulta y registra eventos de tus secciones.' : 'Publica evaluaciones, pruebas y eventos institucionales.' }}</p>
+          <ul>
+            <li *ngIf="esEstudiante">Próximas pruebas</li>
+            <li *ngIf="esEstudiante">Eventos institucionales</li>
+            <li *ngIf="esEstudiante">Mi agenda personal</li>
+            <li *ngIf="esDocente">Programar evaluaciones</li>
+            <li *ngIf="esDocente">Eventos de secciones</li>
+            <li *ngIf="esDirectivo">Publicar fechas de pruebas</li>
+            <li *ngIf="esDirectivo">Designar eventos institucionales</li>
+            <li *ngIf="esDirectivo">Gestionar calendario general</li>
+          </ul>
+        </div>
+        <button (click)="irA('/calendario')">
+          {{ esEstudiante ? 'Ver mi calendario' : 'Gestionar calendario' }} <span class="material-icons">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- REPORTES (solo directivo) -->
       <div class="card" *ngIf="esDirectivo">
         <div>
           <div class="card-icon purple">
