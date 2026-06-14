@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { ObservacionesService, Observacion, ObservacionRequest } from '../../services/observaciones.service';
-import { timeout } from 'rxjs/operators';
+import { GestionEstudiantesService, Estudiante } from '../../services/gestion-estudiantes.service';
 
 @Component({
   selector: 'app-observaciones',
@@ -36,10 +36,31 @@ export class ObservacionesComponent implements OnInit {
 
   tipos = ['ACADEMICA', 'CONDUCTUAL', 'POSITIVA', 'SEGUIMIENTO', 'GENERAL'];
 
+  // Dropdown de estudiantes con búsqueda
+  estudiantes: Estudiante[] = [];
+  busquedaEstudiante = '';
+  mostrarDropdownEstudiante = false;
+
+  get estudiantesFiltrados(): Estudiante[] {
+    const q = this.busquedaEstudiante.toLowerCase();
+    return this.estudiantes.filter(e =>
+      e.nombre.toLowerCase().includes(q) ||
+      e.username.toLowerCase().includes(q) ||
+      (e.rut ?? '').toLowerCase().includes(q)
+    );
+  }
+
+  seleccionarEstudiante(e: Estudiante): void {
+    this.form.estudianteUsername = e.username;
+    this.busquedaEstudiante = `${e.nombre} (${e.username})`;
+    this.mostrarDropdownEstudiante = false;
+  }
+
   private rol: string;
 
   constructor(
     private service: ObservacionesService,
+    private estudiantesService: GestionEstudiantesService,
     private auth: AuthService,
     private router: Router
   ) {
@@ -50,6 +71,12 @@ export class ObservacionesComponent implements OnInit {
     this.nombre  = this.auth.getNombre();
     this.inicial = this.nombre.charAt(0).toUpperCase();
     this.cargar();
+    if (this.puedeCrear()) {
+      this.estudiantesService.listar().subscribe({
+        next:  data => this.estudiantes = data.filter(e => e.activo),
+        error: ()   => {}
+      });
+    }
   }
 
   // ── Toast ─────────────────────────────────────────────────────────────────
@@ -84,7 +111,7 @@ export class ObservacionesComponent implements OnInit {
   puedeCrear():   boolean { return this.esDocente() || this.esDirectivo(); }
 
   guardar(): void {
-    if (!this.form.estudianteUsername.trim()) { this.mostrarToast('El username del estudiante es obligatorio.', 'error'); return; }
+    if (!this.form.estudianteUsername.trim()) { this.mostrarToast('Selecciona un estudiante.', 'error'); return; }
     if (!this.form.titulo.trim())             { this.mostrarToast('El título es obligatorio.', 'error'); return; }
     if (!this.form.contenido.trim())          { this.mostrarToast('El contenido es obligatorio.', 'error'); return; }
 
@@ -139,5 +166,7 @@ export class ObservacionesComponent implements OnInit {
       contenido:          '',
       fechaObservacion:   ''
     };
+    this.busquedaEstudiante = '';
+    this.mostrarDropdownEstudiante = false;
   }
 }

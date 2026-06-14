@@ -32,7 +32,7 @@ export interface EventoRequest {
 @Injectable({ providedIn: 'root' })
 export class CalendarioService {
 
-  private api = 'http://54.196.255.39:8086';
+  private api = 'http://3.94.100.144:8086';
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
