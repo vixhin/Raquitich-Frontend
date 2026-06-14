@@ -23,7 +23,7 @@ export interface Estudiante {
 })
 export class GestionEstudiantesService {
 
-  private api = 'http://localhost:8082';
+  private api = 'http://54.196.255.39:8082';
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

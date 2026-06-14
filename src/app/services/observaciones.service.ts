@@ -28,7 +28,7 @@ export interface ObservacionRequest {
 })
 export class ObservacionesService {
 
-  private api = 'http://localhost:8084';
+  private api = 'http://54.196.255.39:8084';
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
