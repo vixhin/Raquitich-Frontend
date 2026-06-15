@@ -23,7 +23,7 @@ export interface AdminCreateUserRequest {
 @Injectable({ providedIn: 'root' })
 export class UsuariosService {
 
-  private api = 'http://3.94.100.144:8081';
+  private api = 'http://54.235.3.218:8081';
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

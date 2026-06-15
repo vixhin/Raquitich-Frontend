@@ -20,7 +20,7 @@ export interface TallerRequest {
 })
 export class TallerService {
 
-  private apiUrl = 'http://3.94.100.144:8085/api/talleres';
+  private apiUrl = 'http://54.235.3.218:8085/api/talleres';
 
   constructor(private http: HttpClient) {}
 

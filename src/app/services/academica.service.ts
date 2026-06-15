@@ -45,7 +45,7 @@ export interface Inscripcion {
 @Injectable({ providedIn: 'root' })
 export class AcademicaService {
 
-  private api = 'http://3.94.100.144:8083';
+  private api = 'http://54.235.3.218:8083';
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
