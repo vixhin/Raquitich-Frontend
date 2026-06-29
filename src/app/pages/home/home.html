@@ -81,23 +81,6 @@
         </div>
       </div>
 
-      <!-- CALIFICACIONES (todos) -->
-      <div class="menu-item" [class.active]="activeMenu === 'calificaciones'">
-        <div class="menu-title" (click)="toggleMenu('calificaciones')">
-          <div class="title-left">
-            <span class="material-icons icon">grading</span>
-            <span>Calificaciones</span>
-          </div>
-          <span class="material-icons arrow">expand_more</span>
-        </div>
-        <div class="submenu">
-          <a *ngIf="esEstudiante">Ver mis notas</a>
-          <a *ngIf="!esEstudiante">Ingresar notas</a>
-          <a *ngIf="!esEstudiante">Editar notas</a>
-          <a>Historial académico</a>
-        </div>
-      </div>
-
       <!-- MENSAJERÍA (todos) -->
       <div class="menu-item" [class.active]="activeMenu === 'mensajes'">
         <div class="menu-title" (click)="toggleMenu('mensajes')">
@@ -143,22 +126,6 @@
           <a (click)="irA('/calendario')">Ver eventos</a>
           <a *ngIf="!esEstudiante" (click)="irA('/calendario')">Crear evento</a>
           <a *ngIf="esDirectivo" (click)="irA('/calendario')">Publicar evaluaciones</a>
-        </div>
-      </div>
-
-      <!-- REPORTES (solo directivo) -->
-      <div class="menu-item" *ngIf="esDirectivo" [class.active]="activeMenu === 'reportes'">
-        <div class="menu-title" (click)="toggleMenu('reportes')">
-          <div class="title-left">
-            <span class="material-icons icon">analytics</span>
-            <span>Reportes</span>
-          </div>
-          <span class="material-icons arrow">expand_more</span>
-        </div>
-        <div class="submenu">
-          <a>Reporte académico</a>
-          <a>Estadísticas</a>
-          <a>Exportar PDF</a>
         </div>
       </div>
 
@@ -293,26 +260,6 @@
         </button>
       </div>
 
-      <!-- CALIFICACIONES (todos) -->
-      <div class="card">
-        <div>
-          <div class="card-icon orange">
-            <span class="material-icons">grading</span>
-          </div>
-          <h2>Calificaciones</h2>
-          <p>{{ esEstudiante ? 'Consulta tus notas y evaluaciones.' : 'Ingreso y administración de notas y evaluaciones.' }}</p>
-          <ul>
-            <li *ngIf="esEstudiante">Ver mis notas</li>
-            <li *ngIf="!esEstudiante">Registrar notas</li>
-            <li *ngIf="!esEstudiante">Editar evaluaciones</li>
-            <li>Consultar historial</li>
-          </ul>
-        </div>
-        <button>
-          Ingresar <span class="material-icons">arrow_forward</span>
-        </button>
-      </div>
-
       <!-- MENSAJERÍA (todos) -->
       <div class="card">
         <div>
@@ -374,25 +321,6 @@
         </div>
         <button (click)="irA('/calendario')">
           {{ esEstudiante ? 'Ver mi calendario' : 'Gestionar calendario' }} <span class="material-icons">arrow_forward</span>
-        </button>
-      </div>
-
-      <!-- REPORTES (solo directivo) -->
-      <div class="card" *ngIf="esDirectivo">
-        <div>
-          <div class="card-icon purple">
-            <span class="material-icons">analytics</span>
-          </div>
-          <h2>Reportes</h2>
-          <p>Generación de reportes académicos, estadísticas y exportaciones del sistema.</p>
-          <ul>
-            <li>Reporte académico</li>
-            <li>Estadísticas generales</li>
-            <li>Exportar PDF</li>
-          </ul>
-        </div>
-        <button>
-          Ingresar <span class="material-icons">arrow_forward</span>
         </button>
       </div>
 
